@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>✦ MD Vault — 마크다운 뷰어</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Noto+Sans+KR:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+/* ═══════════════════════════════════════════
+   CSS VARIABLES & RESET
+═══════════════════════════════════════════ */
+:root {
+  --bg-base:       #080c14;
+  --bg-panel:      #0d1320;
+  --bg-card:       #111827;
+  --bg-hover:      #1a2340;
+  --border:        #1e2d50;
+  --border-bright: #2a3f6f;
+  --accent:        #e94560;
+  --accent-dim:    rgba(233,69,96,0.15);
+  --accent2:       #7b8cde;
+  --accent3:       #5fb7d4;
+  --text-primary:  #e8edf8;
+  --text-secondary:#a8b2d8;
+  --text-muted:    #5a6585;
+  --code-bg:       #0a0f1a;
+  --shadow:        0 8px 40px rgba(0,0,0,0.6);
+  --radius:        12px;
+  --font-display:  'Syne', sans-serif;
+  --font-body:     'Noto Sans KR', sans-serif;
+  --font-mono:     'JetBrains Mono', monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg-base);
+  color: var(--text-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0;
+  background:
+    radial-gradient(ellipse 80% 50% at 10% 0%,  rgba(233,69,96,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 90% 80%, rgba(123,140,222,0.05) 0%, transparent 60%),
+    repeating-linear-gradient(
+      0deg, transparent, transparent 39px,
+      rgba(255,255,255,0.012) 39px, rgba(255,255,255,0.012) 40px
+    );
+  pointer-events: none;
+}
+
+/* ═══════════════════════════════════════════
+   HEADER
+═══════════════════════════════════════════ */
+header {
+  position: sticky; top: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 32px; height: 60px;
+  background: rgba(8,12,20,0.92);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+}
+
+.logo {
+  font-family: var(--font-display);
+  font-size: 20px; font-weight: 800; letter-spacing: -0.5px;
+  display: flex; align-items: center; gap: 10px;
+}
+.logo-mark {
+  width: 28px; height: 28px;
+  background: var(--accent);
+  clip-path: polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px;
+  animation: pulse-mark 3s ease-in-out infinite;
+}
+@keyframes pulse-mark {
+  0%,100% { box-shadow: 0 0 0 0 rgba(233,69,96,0.4); }
+  50%      { box-shadow: 0 0 0 8px rgba(233,69,96,0); }
+}
+.logo-text span { color: var(--accent); }
+
+.header-docname {
+  font-family: var(--font-display);
+  font-size: 13px; font-weight: 600;
+  color: var(--text-muted);
+  display: none; align-items: center; gap: 8px;
+}
+.header-docname .dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--accent); flex-shrink: 0;
+  animation: blink-dot 2.5s ease-in-out infinite;
+}
+@keyframes blink-dot {
+  0%,100% { opacity:1; } 50% { opacity:0.3; }
+}
+.header-docname .name {
+  color: var(--text-primary);
+  max-width: 320px; overflow: hidden;
+  text-overflow: ellipsis; white-space: nowrap;
+}
+
+.header-actions { display: flex; align-items: center; gap: 10px; }
+
+/* ═══════════════════════════════════════════
+   BUTTONS
+═══════════════════════════════════════════ */
+.btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 8px 18px; border-radius: 8px; border: none;
+  cursor: pointer; font-family: var(--font-body);
+  font-size: 13px; font-weight: 500;
+  transition: all 0.2s ease; white-space: nowrap;
+}
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-primary:hover {
+  background: #ff5577; transform: translateY(-1px);
+  box-shadow: 0 4px 20px rgba(233,69,96,0.4);
+}
+.btn-ghost {
+  background: transparent; color: var(--text-secondary);
+  border: 1px solid var(--border);
+}
+.btn-ghost:hover {
+  background: var(--bg-hover); color: var(--text-primary);
+  border-color: var(--border-bright);
+}
+
+/* ═══════════════════════════════════════════
+   LAYOUT
+═══════════════════════════════════════════ */
+.app-layout {
+  position: relative; z-index: 1;
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  height: calc(100vh - 60px);
+}
+
+/* ═══════════════════════════════════════════
+   SIDEBAR
+═══════════════════════════════════════════ */
+aside {
+  background: var(--bg-panel);
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+
+.sidebar-section {
+  padding: 18px 20px 10px;
+  font-family: var(--font-display);
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 3px; text-transform: uppercase;
+  color: var(--text-muted); flex-shrink: 0;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.toc-count {
+  background: var(--bg-card); border: 1px solid var(--border);
+  color: var(--accent); border-radius: 10px;
+  padding: 1px 8px; font-size: 10px; font-weight: 700;
+}
+
+.toc-list-wrap {
+  flex: 1; overflow-y: auto; padding: 0 10px 20px;
+}
+.toc-list-wrap::-webkit-scrollbar { width: 3px; }
+.toc-list-wrap::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+.toc-item {
+  display: flex; align-items: center; gap: 6px;
+  padding: 5px 10px; border-radius: 6px; cursor: pointer;
+  font-size: 12px; color: var(--text-secondary);
+  transition: all 0.15s;
+  border-left: 2px solid transparent;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  line-height: 1.5;
+}
+.toc-item:hover {
+  background: var(--bg-hover); color: var(--text-primary);
+  border-left-color: var(--accent2);
+}
+.toc-item.active { color: var(--accent); border-left-color: var(--accent); }
+.toc-badge {
+  font-size: 9px; font-weight: 700; font-family: var(--font-display);
+  padding: 1px 5px; border-radius: 3px; flex-shrink: 0;
+}
+
+.toc-empty {
+  text-align: center; padding: 40px 20px;
+  color: var(--text-muted); font-size: 12px; line-height: 2;
+}
+.toc-empty-icon { font-size: 28px; margin-bottom: 8px; opacity: 0.3; }
+
+.sidebar-footer {
+  padding: 14px 20px;
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.doc-info-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px; padding: 12px 14px;
+}
+.doc-info-label {
+  font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--text-muted); font-family: var(--font-display); font-weight: 700;
+  margin-bottom: 5px;
+}
+.doc-info-name {
+  font-size: 12px; font-weight: 600; color: var(--accent2);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  margin-bottom: 3px; font-family: var(--font-mono);
+}
+.doc-info-date { font-size: 10px; color: var(--text-muted); }
+.doc-info-empty { font-size: 12px; color: var(--text-muted); font-style: italic; }
+
+/* ═══════════════════════════════════════════
+   MAIN CONTENT
+═══════════════════════════════════════════ */
+main { overflow-y: auto; overflow-x: hidden; position: relative; }
+main::-webkit-scrollbar { width: 6px; }
+main::-webkit-scrollbar-track { background: var(--bg-base); }
+main::-webkit-scrollbar-thumb { background: var(--border); border-radius: 6px; }
+main::-webkit-scrollbar-thumb:hover { background: var(--border-bright); }
+
+/* WELCOME SCREEN */
+.welcome-screen {
+  display: none;
+  flex-direction: column; align-items: center; justify-content: center;
+  min-height: 100%; padding: 60px 40px;
+}
+.welcome-screen.show { display: flex; }
+.welcome-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.4rem, 5vw, 3.6rem); font-weight: 800;
+  text-align: center; line-height: 1.1; margin-bottom: 16px;
+  background: linear-gradient(135deg, #e8edf8 0%, var(--accent2) 50%, var(--accent) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.welcome-sub {
+  color: var(--text-muted); font-size: 15px;
+  text-align: center; max-width: 380px; line-height: 1.8; margin-bottom: 36px;
+}
+
+/* DOC TOOLBAR */
+.doc-toolbar {
+  display: none; align-items: center; justify-content: space-between;
+  padding: 12px 48px; background: var(--bg-panel);
+  border-bottom: 1px solid var(--border);
+  gap: 12px; flex-wrap: wrap;
+  position: sticky; top: 0; z-index: 10;
+}
+.doc-toolbar.visible { display: flex; }
+.doc-meta { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+.doc-meta-title {
+  font-family: var(--font-display); font-size: 15px; font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.doc-meta-tags { font-size: 11px; color: var(--accent2); }
+.toolbar-actions { display: flex; gap: 8px; flex-shrink: 0; }
+
+/* DOCUMENT CONTENT */
+.doc-content {
+  display: none; padding: 48px 60px;
+  max-width: 860px; margin: 0 auto;
+}
+.doc-content.visible { display: block; }
+
+/* ═══════════════════════════════════════════
+   MARKDOWN RENDERING
+═══════════════════════════════════════════ */
+.md-body { font-size: 15px; line-height: 1.85; color: var(--text-secondary); }
+
+.md-body h1,.md-body h2,.md-body h3,.md-body h4 {
+  font-family: var(--font-display); color: var(--text-primary);
+  margin: 2em 0 0.6em; line-height: 1.3; scroll-margin-top: 80px;
+}
+.md-body h1 {
+  font-size: 2.2em; font-weight: 800;
+  border-bottom: 2px solid var(--accent); padding-bottom: 10px; margin-top: 0.5em;
+}
+.md-body h2 {
+  font-size: 1.55em; font-weight: 700;
+  border-bottom: 1px solid var(--border); padding-bottom: 7px;
+}
+.md-body h3 { font-size: 1.2em; font-weight: 600; }
+.md-body h4 { font-size: 1.05em; font-weight: 600; color: var(--accent2); }
+.md-body p { margin: 0.8em 0; }
+.md-body strong { color: var(--text-primary); font-weight: 700; }
+.md-body em { color: #c8d0f0; font-style: italic; }
+.md-body del { color: var(--text-muted); text-decoration: line-through; }
+.md-body a { color: var(--accent2); text-decoration: underline; text-underline-offset: 3px; }
+.md-body a:hover { color: var(--accent); }
+.md-body code {
+  font-family: var(--font-mono); font-size: 0.85em;
+  background: rgba(123,140,222,0.12); color: #e94560;
+  padding: 2px 7px; border-radius: 5px;
+  border: 1px solid rgba(123,140,222,0.15);
+}
+.md-body pre {
+  background: var(--code-bg); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 20px 22px;
+  overflow-x: auto; margin: 1.2em 0; position: relative;
+}
+.md-body pre code {
+  background: none; border: none; padding: 0;
+  color: #e6edf3; font-size: 13px; line-height: 1.7;
+}
+.code-lang-badge {
+  position: absolute; top: 10px; right: 60px;
+  font-family: var(--font-display); font-size: 10px;
+  font-weight: 700; letter-spacing: 1px;
+  color: var(--text-muted); text-transform: uppercase;
+}
+.code-copy-btn {
+  position: absolute; top: 8px; right: 12px;
+  background: var(--bg-hover); border: 1px solid var(--border);
+  color: var(--text-muted); border-radius: 6px;
+  padding: 3px 8px; font-size: 11px; cursor: pointer;
+  transition: all 0.15s;
+}
+.code-copy-btn:hover { color: var(--accent); border-color: var(--accent); }
+.md-body blockquote {
+  border-left: 3px solid var(--accent); padding: 10px 20px;
+  margin: 1em 0; background: var(--accent-dim);
+  border-radius: 0 8px 8px 0; color: var(--text-muted);
+}
+.md-body ul,.md-body ol { padding-left: 24px; margin: 0.6em 0; }
+.md-body li { margin: 4px 0; line-height: 1.7; }
+.md-body li::marker { color: var(--accent); }
+.md-body hr { border: none; border-top: 1px solid var(--border); margin: 2em 0; }
+.md-body table { width: 100%; border-collapse: collapse; margin: 1.2em 0; font-size: 14px; }
+.md-body th {
+  background: var(--bg-card); padding: 10px 16px; text-align: left;
+  font-family: var(--font-display); font-size: 11px;
+  font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+  color: var(--accent2); border-bottom: 2px solid var(--border);
+}
+.md-body td { padding: 10px 16px; border-bottom: 1px solid var(--border); color: var(--text-secondary); }
+.md-body tr:hover td { background: var(--bg-hover); }
+
+.doc-header { margin-bottom: 36px; padding-bottom: 28px; border-bottom: 1px solid var(--border); }
+.doc-header-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 800;
+  line-height: 1.15; color: var(--text-primary); margin-bottom: 14px;
+}
+.doc-header-meta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.doc-header-date { font-size: 12px; color: var(--text-muted); }
+.tag-chip {
+  display: inline-flex; align-items: center;
+  background: rgba(123,140,222,0.1); border: 1px solid rgba(123,140,222,0.25);
+  color: var(--accent2); padding: 3px 10px; border-radius: 20px;
+  font-size: 11px; font-weight: 500;
+}
+
+/* ═══════════════════════════════════════════
+   PASTE MODAL
+═══════════════════════════════════════════ */
+.modal-backdrop {
+  display: none; position: fixed; inset: 0; z-index: 200;
+  background: rgba(0,0,0,0.78); backdrop-filter: blur(8px);
+  align-items: center; justify-content: center;
+}
+.modal-backdrop.open { display: flex; }
+.modal {
+  background: var(--bg-panel); border: 1px solid var(--border-bright);
+  border-radius: 16px; width: min(700px, 95vw);
+  overflow: hidden; box-shadow: var(--shadow);
+  animation: modal-in 0.25s ease;
+}
+@keyframes modal-in {
+  from { opacity: 0; transform: scale(0.95) translateY(10px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+.modal-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 20px 24px 16px; border-bottom: 1px solid var(--border);
+}
+.modal-title { font-family: var(--font-display); font-size: 16px; font-weight: 700; }
+.modal-title-sub { font-size: 11px; color: var(--text-muted); font-weight: 400; margin-left: 10px; font-family: var(--font-body); }
+.modal-close {
+  background: none; border: none; color: var(--text-muted);
+  font-size: 20px; cursor: pointer; padding: 2px 6px;
+  border-radius: 6px; transition: all 0.15s;
+}
+.modal-close:hover { color: var(--accent); background: var(--accent-dim); }
+
+.fixed-name-badge {
+  margin: 16px 24px 0;
+  display: flex; align-items: center; gap: 10px;
+  background: var(--bg-card); border: 1px solid var(--border-bright);
+  border-radius: 8px; padding: 10px 16px;
+}
+.fixed-name-icon { font-size: 14px; }
+.fixed-name-label { font-size: 11px; color: var(--text-muted); }
+.fixed-name-value {
+  font-family: var(--font-mono); font-size: 13px;
+  color: var(--accent2); font-weight: 500;
+}
+.fixed-name-locked {
+  margin-left: auto; font-size: 11px; color: var(--text-muted);
+  display: flex; align-items: center; gap: 4px;
+}
+
+.modal-body { padding: 14px 24px 20px; }
+.modal-input {
+  width: 100%; background: var(--bg-card);
+  border: 1px solid var(--border); border-radius: 8px;
+  padding: 14px; color: var(--text-primary);
+  font-family: var(--font-mono); font-size: 12px;
+  resize: vertical; min-height: 280px; line-height: 1.65;
+  transition: border-color 0.2s;
+}
+.modal-input:focus { outline: none; border-color: var(--accent2); }
+.modal-hint {
+  font-size: 11px; color: var(--text-muted); margin-top: 8px;
+  display: flex; align-items: center; gap: 5px;
+}
+.modal-hint span { color: var(--accent2); }
+
+.modal-footer {
+  display: flex; gap: 10px; justify-content: space-between; align-items: center;
+  padding: 14px 24px 20px; border-top: 1px solid var(--border);
+}
+.modal-footer-left { font-size: 11px; color: var(--text-muted); font-family: var(--font-mono); }
+.modal-footer-right { display: flex; gap: 10px; }
+
+/* ═══════════════════════════════════════════
+   TOAST
+═══════════════════════════════════════════ */
+#toast {
+  position: fixed; bottom: 28px; right: 28px; z-index: 9999;
+  background: var(--bg-panel); border: 1px solid var(--border-bright);
+  border-radius: 10px; padding: 12px 20px;
+  font-size: 13px; color: var(--text-primary);
+  box-shadow: var(--shadow);
+  display: flex; align-items: center; gap: 8px;
+  transform: translateY(20px); opacity: 0;
+  transition: all 0.3s ease; pointer-events: none;
+}
+#toast.show { transform: translateY(0); opacity: 1; }
+
+#reading-progress {
+  position: fixed; top: 60px; left: 0; z-index: 99; height: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  width: 0%; transition: width 0.1s linear;
+}
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .app-layout { grid-template-columns: 1fr; }
+  aside { display: none; }
+  .doc-content { padding: 28px 24px; }
+  .header-docname { display: none !important; }
+}
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 6px; }
+</style>
+</head>
+<body>
+
+<div id="reading-progress"></div>
+
+<!-- ══════════ HEADER ══════════ -->
+<header>
+  <div class="logo">
+    <div class="logo-mark">✦</div>
+    <div class="logo-text">MD <span>Vault</span></div>
+  </div>
+
+  <div class="header-docname" id="header-docname">
+    <div class="dot"></div>
+    <span class="name" id="header-doc-name-text"></span>
+  </div>
+
+  <div class="header-actions">
+    <button class="btn btn-ghost" onclick="openPasteModal()">✎ 내용 수정</button>
+    <button class="btn btn-ghost" id="btn-download" style="display:none" onclick="downloadCurrent()">↓ 저장</button>
+    <button class="btn btn-ghost" id="btn-copy"     style="display:none" onclick="copyMarkdown()">⎘ 복사</button>
+  </div>
+</header>
+
+<!-- ══════════ LAYOUT ══════════ -->
+<div class="app-layout">
+
+  <!-- SIDEBAR -->
+  <aside>
+    <div class="sidebar-section">
+      <span>📑 목차</span>
+      <span class="toc-count" id="toc-count">0</span>
+    </div>
+
+    <div class="toc-list-wrap" id="toc-list">
+      <div class="toc-empty" id="toc-empty">
+        <div class="toc-empty-icon">📋</div>
+        문서를 입력하면<br>목차가 자동 생성됩니다
+      </div>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="doc-info-card">
+        <div class="doc-info-label">저장된 파일</div>
+        <div class="doc-info-name" id="info-name">
+          <span class="doc-info-empty">없음</span>
+        </div>
+        <div class="doc-info-date" id="info-date"></div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main id="main-content" onscroll="updateProgress()">
+
+    <!-- WELCOME -->
+    <div class="welcome-screen show" id="welcome-screen">
+      <div class="welcome-title">마크다운을<br>아름답게</div>
+      <div class="welcome-sub">
+        저장된 문서가 없습니다.<br>
+        내용을 입력하면 브라우저에 저장되어<br>
+        다음 방문 시 자동으로 불러옵니다.
+      </div>
+      <button class="btn btn-primary" onclick="openPasteModal()">✎ 내용 입력하기</button>
+    </div>
+
+    <!-- DOC TOOLBAR -->
+    <div class="doc-toolbar" id="doc-toolbar">
+      <div class="doc-meta">
+        <div class="doc-meta-title" id="toolbar-title">—</div>
+        <div class="doc-meta-tags" id="toolbar-tags"></div>
+      </div>
+      <div class="toolbar-actions">
+        <button class="btn btn-ghost" onclick="openPasteModal()">✎ 수정</button>
+        <button class="btn btn-ghost" onclick="copyMarkdown()">⎘ 복사</button>
+        <button class="btn btn-ghost" onclick="downloadCurrent()">↓ 저장</button>
+        <button class="btn btn-ghost" onclick="window.print()">⎙ 인쇄</button>
+      </div>
+    </div>
+
+    <!-- DOC CONTENT -->
+    <div class="doc-content" id="doc-content">
+      <div class="doc-header" id="doc-header"></div>
+      <div class="md-body"    id="md-body"></div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ══════════ MODAL ══════════ -->
+<div class="modal-backdrop" id="paste-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">
+        ✎ 마크다운 편집
+        <span class="modal-title-sub">항상 같은 파일에 덮어씁니다</span>
+      </div>
+      <button class="modal-close" onclick="closePasteModal()">✕</button>
+    </div>
+
+    <!-- 고정 파일명 배지 -->
+    <div class="fixed-name-badge">
+      <span class="fixed-name-icon">📄</span>
+      <span class="fixed-name-label">저장 위치</span>
+      <span class="fixed-name-value" id="badge-filename">my-document.md</span>
+      <span class="fixed-name-locked">🔒 고정된 파일명</span>
+    </div>
+
+    <div class="modal-body">
+      <textarea class="modal-input" id="paste-content"
+        placeholder="# 제목을 여기에 입력하세요&#10;&#10;## 섹션&#10;내용을 작성하면 저장됩니다.&#10;&#10;- 항목 1&#10;- 항목 2&#10;&#10;**굵게**, *이탤릭*, `코드`"></textarea>
+      <div class="modal-hint">
+        💡 <span>브라우저 localStorage</span>에 저장 — 같은 브라우저에서는 항상 자동으로 불러옵니다
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <div class="modal-footer-left" id="modal-char-count">0 자</div>
+      <div class="modal-footer-right">
+        <button class="btn btn-ghost" onclick="closePasteModal()">취소</button>
+        <button class="btn btn-primary" onclick="saveAndRender()">✦ 저장 &amp; 렌더링</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<!-- ══════════ JAVASCRIPT ══════════ -->
+<script>
+/* ──────────────────────────────────
+   고정 상수
+────────────────────────────────── */
+const STORAGE_KEY    = 'md_vault_single_doc';  // localStorage 키 (고정)
+const FIXED_FILENAME = 'my-document.md';       // 표시용 파일명 (고정)
+
+/* ──────────────────────────────────
+   MARKDOWN PARSER
+────────────────────────────────── */
+function parseMarkdown(md) {
+  const lines = md.split('\n');
+  let html = '', i = 0, hi = 0;
+
+  const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+  function inline(t) {
+    t = t.replace(/`([^`]+)`/g, '<code>$1</code>');
+    t = t.replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>');
+    t = t.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    t = t.replace(/\*(.+?)\*/g, '<em>$1</em>');
+    t = t.replace(/_(.+?)_/g, '<em>$1</em>');
+    t = t.replace(/~~(.+?)~~/g, '<del>$1</del>');
+    t = t.replace(/!\[(.+?)\]\((.+?)\)/g, '<img src="$2" alt="$1" style="max-width:100%;border-radius:8px;margin:8px 0">');
+    t = t.replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" target="_blank">$1</a>');
+    return t;
+  }
+
+  function anchor(text, idx) {
+    return `h${idx}-` + text.toLowerCase().replace(/[^\w가-힣\s-]/g,'').replace(/\s+/g,'-').trim();
+  }
+
+  while (i < lines.length) {
+    const line = lines[i];
+
+    // 코드 블록
+    if (line.startsWith('```')) {
+      const lang = line.slice(3).trim();
+      const buf = []; i++;
+      while (i < lines.length && !lines[i].startsWith('```')) { buf.push(esc(lines[i])); i++; }
+      const lb = lang ? `<span class="code-lang-badge">${lang}</span>` : '';
+      html += `<pre>${lb}<button class="code-copy-btn" onclick="copyCode(this)">복사</button><code>${buf.join('\n')}</code></pre>`;
+      i++; continue;
+    }
+
+    // 헤딩
+    const hm = line.match(/^(#{1,4})\s+(.*)/);
+    if (hm) {
+      const lv = hm[1].length, text = hm[2].trim();
+      html += `<h${lv} id="${anchor(text, hi++)}">${inline(text)}</h${lv}>`;
+      i++; continue;
+    }
+
+    // HR
+    if (/^-{3,}$/.test(line.trim())) { html += '<hr>'; i++; continue; }
+
+    // Blockquote
+    if (line.startsWith('> ')) {
+      const bq = [];
+      while (i < lines.length && lines[i].startsWith('> ')) { bq.push(inline(lines[i].slice(2))); i++; }
+      html += `<blockquote>${bq.join('<br>')}</blockquote>`; continue;
+    }
+
+    // Table
+    if (line.includes('|') && i+1 < lines.length && lines[i+1].includes('---')) {
+      const headers = line.split('|').map(h=>h.trim()).filter(Boolean);
+      i += 2;
+      const rows = [];
+      while (i < lines.length && lines[i].includes('|')) {
+        rows.push(lines[i].split('|').map(c=>c.trim()).filter(Boolean)); i++;
+      }
+      html += '<table><thead><tr>' + headers.map(h=>`<th>${inline(h)}</th>`).join('') + '</tr></thead>';
+      html += '<tbody>' + rows.map(r=>'<tr>'+r.map(c=>`<td>${inline(c)}</td>`).join('')+'</tr>').join('') + '</tbody></table>';
+      continue;
+    }
+
+    // 비순서 목록
+    if (/^[-*+]\s/.test(line)) {
+      const items = [];
+      while (i < lines.length && /^[-*+]\s/.test(lines[i])) {
+        items.push(`<li>${inline(lines[i].replace(/^[-*+]\s/,''))}</li>`); i++;
+      }
+      html += `<ul>${items.join('')}</ul>`; continue;
+    }
+
+    // 순서 목록
+    if (/^\d+\.\s/.test(line)) {
+      const items = [];
+      while (i < lines.length && /^\d+\.\s/.test(lines[i])) {
+        items.push(`<li>${inline(lines[i].replace(/^\d+\.\s/,''))}</li>`); i++;
+      }
+      html += `<ol>${items.join('')}</ol>`; continue;
+    }
+
+    if (!line.trim()) { html += '<div style="height:6px"></div>'; i++; continue; }
+    html += `<p>${inline(line)}</p>`; i++;
+  }
+  return html;
+}
+
+/* ──────────────────────────────────
+   META PARSER
+────────────────────────────────── */
+function parseMeta(md) {
+  const t = md.match(/^#\s+(.*)/m);
+  const d = md.match(/\*\*작성일:\*\*\s*([^\n<]+)/);
+  const g = md.match(/\*\*태그:\*\*\s*([^\n<]+)/);
+  return {
+    title: t ? t[1].trim() : FIXED_FILENAME.replace('.md',''),
+    date:  d ? d[1].trim() : '',
+    tags:  g ? g[1].trim() : '',
+  };
+}
+
+/* ──────────────────────────────────
+   TOC
+────────────────────────────────── */
+function extractHeadings(md) {
+  const result = []; let idx = 0;
+  md.split('\n').forEach(line => {
+    const m = line.match(/^(#{1,4})\s+(.*)/);
+    if (m) {
+      const text = m[2].trim();
+      const anch = `h${idx}-` + text.toLowerCase().replace(/[^\w가-힣\s-]/g,'').replace(/\s+/g,'-').trim();
+      result.push({ level: m[1].length, text, anchor: anch }); idx++;
+    }
+  });
+  return result;
+}
+
+function renderToc(headings) {
+  const list  = document.getElementById('toc-list');
+  const empty = document.getElementById('toc-empty');
+  document.getElementById('toc-count').textContent = headings.length;
+
+  if (!headings.length) { list.innerHTML = ''; list.appendChild(empty); return; }
+
+  const COLORS = {1:'#e94560',2:'#7b8cde',3:'#5fb7d4',4:'#8ecf8e'};
+  const LABELS = {1:'H1',2:'H2',3:'H3',4:'H4'};
+  const INDENT = {1:0,2:12,3:24,4:36};
+
+  list.innerHTML = headings.map(h => `
+    <div class="toc-item" style="padding-left:${10+INDENT[h.level]}px"
+         data-anchor="${h.anchor}" onclick="scrollToHeading('${h.anchor}')">
+      <span class="toc-badge" style="background:${COLORS[h.level]}22;color:${COLORS[h.level]}">${LABELS[h.level]}</span>
+      ${h.text.length > 26 ? h.text.slice(0,26)+'…' : h.text}
+    </div>
+  `).join('');
+}
+
+function scrollToHeading(anchor) {
+  const el = document.getElementById(anchor);
+  if (!el) return;
+  el.scrollIntoView({ behavior:'smooth', block:'start' });
+  el.style.transition = 'background 0.1s';
+  el.style.background = 'rgba(233,69,96,0.15)';
+  el.style.borderRadius = '6px';
+  setTimeout(() => { el.style.transition = 'background 1.5s ease'; el.style.background = 'transparent'; }, 200);
+  document.querySelectorAll('.toc-item').forEach(item =>
+    item.classList.toggle('active', item.dataset.anchor === anchor));
+}
+
+/* ──────────────────────────────────
+   RENDER
+────────────────────────────────── */
+function renderDoc(content, savedAt) {
+  const meta = parseMeta(content);
+
+  // 툴바
+  document.getElementById('toolbar-title').textContent = meta.title;
+  document.getElementById('toolbar-tags').textContent  = meta.tags ? `🏷 ${meta.tags}` : '';
+  document.getElementById('doc-toolbar').classList.add('visible');
+
+  // 문서 헤더
+  let metaHtml = '';
+  if (meta.date) metaHtml += `<span class="doc-header-date">📅 ${meta.date}</span>`;
+  if (meta.tags) meta.tags.split(',').forEach(t =>
+    metaHtml += `<span class="tag-chip">${t.trim()}</span>`);
+  document.getElementById('doc-header').innerHTML = `
+    <div class="doc-header-title">${meta.title}</div>
+    <div class="doc-header-meta">${metaHtml}</div>`;
+
+  // 본문
+  document.getElementById('md-body').innerHTML = parseMarkdown(content);
+
+  // 화면 전환
+  document.getElementById('welcome-screen').classList.remove('show');
+  document.getElementById('doc-content').classList.add('visible');
+
+  // 헤더 파일명 표시
+  document.getElementById('header-doc-name-text').textContent = FIXED_FILENAME;
+  document.getElementById('header-docname').style.display     = 'flex';
+  document.getElementById('btn-download').style.display       = '';
+  document.getElementById('btn-copy').style.display           = '';
+
+  // 사이드바 정보
+  document.getElementById('info-name').textContent = FIXED_FILENAME;
+  document.getElementById('info-date').textContent = savedAt ? `💾 ${savedAt}` : '';
+
+  // TOC
+  renderToc(extractHeadings(content));
+}
+
+/* ──────────────────────────────────
+   STORAGE
+────────────────────────────────── */
+function saveDoc(content) {
+  const savedAt = new Date().toLocaleString('ko-KR');
+  localStorage.setItem(STORAGE_KEY, JSON.stringify({ content, savedAt }));
+  return savedAt;
+}
+
+function loadDoc() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)); } catch(e) { return null; }
+}
+
+/* ──────────────────────────────────
+   MODAL
+────────────────────────────────── */
+function openPasteModal() {
+  const saved = loadDoc();
+  document.getElementById('paste-content').value = saved ? saved.content : '';
+  document.getElementById('badge-filename').textContent = FIXED_FILENAME;
+  updateCharCount();
+  document.getElementById('paste-modal').classList.add('open');
+  setTimeout(() => document.getElementById('paste-content').focus(), 100);
+}
+
+function closePasteModal() {
+  document.getElementById('paste-modal').classList.remove('open');
+}
+
+function saveAndRender() {
+  const content = document.getElementById('paste-content').value.trim();
+  if (!content) { showToast('⚠ 내용을 입력해주세요'); return; }
+  const savedAt = saveDoc(content);
+  renderDoc(content, savedAt);
+  closePasteModal();
+  document.getElementById('main-content').scrollTo({ top: 0 });
+  showToast(`✦ ${FIXED_FILENAME} 에 저장되었습니다`);
+}
+
+function updateCharCount() {
+  const len = document.getElementById('paste-content').value.length;
+  document.getElementById('modal-char-count').textContent = len.toLocaleString() + ' 자';
+}
+document.getElementById('paste-content').addEventListener('input', updateCharCount);
+document.getElementById('paste-modal').addEventListener('click', e => {
+  if (e.target === e.currentTarget) closePasteModal();
+});
+
+/* ──────────────────────────────────
+   TOOLBAR ACTIONS
+────────────────────────────────── */
+function copyMarkdown() {
+  const saved = loadDoc();
+  if (!saved) return;
+  navigator.clipboard.writeText(saved.content)
+    .then(() => showToast('⎘ 마크다운이 복사되었습니다'));
+}
+
+function copyCode(btn) {
+  const code = btn.closest('pre').querySelector('code').textContent;
+  navigator.clipboard.writeText(code)
+    .then(() => { btn.textContent = '✓ 복사됨'; setTimeout(() => btn.textContent = '복사', 1500); });
+}
+
+function downloadCurrent() {
+  const saved = loadDoc();
+  if (!saved) return;
+  const blob = new Blob([saved.content], { type: 'text/markdown' });
+  const url  = URL.createObjectURL(blob);
+  const a    = Object.assign(document.createElement('a'), { href: url, download: FIXED_FILENAME });
+  a.click(); URL.revokeObjectURL(url);
+  showToast(`↓ ${FIXED_FILENAME} 저장 완료`);
+}
+
+/* ──────────────────────────────────
+   UI HELPERS
+────────────────────────────────── */
+function updateProgress() {
+  const el  = document.getElementById('main-content');
+  const pct = el.scrollHeight - el.clientHeight > 0
+    ? el.scrollTop / (el.scrollHeight - el.clientHeight) * 100 : 0;
+  document.getElementById('reading-progress').style.width = pct + '%';
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+/* ──────────────────────────────────
+   KEYBOARD SHORTCUTS
+────────────────────────────────── */
+document.addEventListener('keydown', e => {
+  const tag = document.activeElement.tagName;
+  if (tag === 'TEXTAREA' || tag === 'INPUT') return;
+  if ((e.ctrlKey||e.metaKey) && e.key === 'e') { e.preventDefault(); openPasteModal(); }
+  if ((e.ctrlKey||e.metaKey) && e.key === 's') { e.preventDefault(); downloadCurrent(); }
+  if (e.key === 'Escape') closePasteModal();
+});
+
+/* ──────────────────────────────────
+   INIT — 페이지 열릴 때 자동 불러오기
+────────────────────────────────── */
+(function init() {
+  document.getElementById('badge-filename').textContent = FIXED_FILENAME;
+  const saved = loadDoc();
+  if (saved && saved.content) {
+    renderDoc(saved.content, saved.savedAt);  // ← 저장된 내용이 있으면 바로 렌더링
+  }
+  // 없으면 welcome 화면 유지
+})();
+</script>
+</body>
+</html>
