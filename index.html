@@ -1022,7 +1022,7 @@ document.getElementById('fullscreen-overlay').addEventListener('scroll',function
 });
 
 /* ══════════════════════════════════
-   TOOLBAR
+   TOOLBAR 
 ══════════════════════════════════ */
 function copyMarkdown() { const s=loadDoc(); if(!s) return; navigator.clipboard.writeText(s.content).then(()=>showToast('⎘ 복사됨')); }
 function copyCode(btn) { const c=btn.closest('pre').querySelector('code').textContent; navigator.clipboard.writeText(c).then(()=>{btn.textContent='✓';setTimeout(()=>btn.textContent='복사',1500);}); }
