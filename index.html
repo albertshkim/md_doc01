@@ -3,146 +3,1085 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>✦ MD Vault — 마크다운 뷰어</title>
+<title>✦ MD Vault — 마크다운 뷰어 *** </title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Noto+Sans+KR:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 /* ═══════════════════════════════════════
-   THEME VARIABLES & BASE (기존 스타일 유지)
+   DARK THEME (기본)
 ═══════════════════════════════════════ */
-:root, [data-theme="dark"] {
-  --bg-base: #080c14; --bg-panel: #0d1320; --bg-card: #111827; --bg-hover: #1a2340;
-  --border: #1e2d50; --border-bright: #2a3f6f; --accent: #e94560; --accent-dim: rgba(233,69,96,0.15);
-  --accent2: #7b8cde; --accent3: #5fb7d4; --text-primary: #e8edf8; --text-secondary: #a8b2d8;
-  --text-muted: #5a6585; --code-bg: #0a0f1a; --code-color: #e6edf3; --shadow: 0 8px 40px rgba(0,0,0,0.6);
-  --header-bg: rgba(8,12,20,0.92); --noise-color1: rgba(233,69,96,0.06); --noise-color2: rgba(123,140,222,0.05);
-  --grid-line: rgba(255,255,255,0.012); --blockquote-bg: rgba(233,69,96,0.10); --inline-code-bg: rgba(123,140,222,0.12);
-  --inline-code-cl: #e94560; --img-border: #1e2d50; --table-row-hover:#1a2340; --toc-item-hover: #1a2340;
-  --pw-modal-bg: #0d1320; --info-card-bg: #111827;
+:root,
+[data-theme="dark"] {
+  --bg-base:        #080c14;
+  --bg-panel:       #0d1320;
+  --bg-card:        #111827;
+  --bg-hover:       #1a2340;
+  --border:         #1e2d50;
+  --border-bright:  #2a3f6f;
+  --accent:         #e94560;
+  --accent-dim:     rgba(233,69,96,0.15);
+  --accent2:        #7b8cde;
+  --accent3:        #5fb7d4;
+  --text-primary:   #e8edf8;
+  --text-secondary: #a8b2d8;
+  --text-muted:     #5a6585;
+  --code-bg:        #0a0f1a;
+  --code-color:     #e6edf3;
+  --shadow:         0 8px 40px rgba(0,0,0,0.6);
+  --header-bg:      rgba(8,12,20,0.92);
+  --noise-color1:   rgba(233,69,96,0.06);
+  --noise-color2:   rgba(123,140,222,0.05);
+  --grid-line:      rgba(255,255,255,0.012);
+  --blockquote-bg:  rgba(233,69,96,0.10);
+  --inline-code-bg: rgba(123,140,222,0.12);
+  --inline-code-cl: #e94560;
+  --img-border:     #1e2d50;
+  --table-row-hover:#1a2340;
+  --toc-item-hover: #1a2340;
+  --pw-modal-bg:    #0d1320;
+  --info-card-bg:   #111827;
 }
-
-[data-theme="light"] {
-  --bg-base: #f4f6fb; --bg-panel: #ffffff; --bg-card: #f0f4fc; --bg-hover: #e8edf8;
-  --border: #d0d9ee; --border-bright: #b0bedd; --accent: #d63051; --accent-dim: rgba(214,48,81,0.10);
-  --accent2: #4a5fcf; --accent3: #1a8fa8; --text-primary: #0f1a2e; --text-secondary: #334166;
-  --text-muted: #8294b8; --code-bg: #edf0f8; --code-color: #1e2d50; --shadow: 0 8px 40px rgba(0,0,0,0.12);
-  --header-bg: rgba(255,255,255,0.94); --noise-color1: rgba(214,48,81,0.04); --noise-color2: rgba(74,95,207,0.04);
-  --grid-line: rgba(0,0,0,0.03); --blockquote-bg: rgba(214,48,81,0.06); --inline-code-bg: rgba(74,95,207,0.10);
-  --inline-code-cl: #d63051; --img-border: #d0d9ee; --table-row-hover:#e8edf8; --toc-item-hover: #e8edf8;
-  --pw-modal-bg: #ffffff; --info-card-bg: #f0f4fc;
-}
-
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'Noto Sans KR', sans-serif; background: var(--bg-base); color: var(--text-primary); min-height: 100vh; transition: all 0.3s; }
 
 /* ═══════════════════════════════════════
-   LAYOUT & HEADER
+   LIGHT THEME
+═══════════════════════════════════════ */
+[data-theme="light"] {
+  --bg-base:        #f4f6fb;
+  --bg-panel:       #ffffff;
+  --bg-card:        #f0f4fc;
+  --bg-hover:       #e8edf8;
+  --border:         #d0d9ee;
+  --border-bright:  #b0bedd;
+  --accent:         #d63051;
+  --accent-dim:     rgba(214,48,81,0.10);
+  --accent2:        #4a5fcf;
+  --accent3:        #1a8fa8;
+  --text-primary:   #0f1a2e;
+  --text-secondary: #334166;
+  --text-muted:     #8294b8;
+  --code-bg:        #edf0f8;
+  --code-color:     #1e2d50;
+  --shadow:         0 8px 40px rgba(0,0,0,0.12);
+  --header-bg:      rgba(255,255,255,0.94);
+  --noise-color1:   rgba(214,48,81,0.04);
+  --noise-color2:   rgba(74,95,207,0.04);
+  --grid-line:      rgba(0,0,0,0.03);
+  --blockquote-bg:  rgba(214,48,81,0.06);
+  --inline-code-bg: rgba(74,95,207,0.10);
+  --inline-code-cl: #d63051;
+  --img-border:     #d0d9ee;
+  --table-row-hover:#e8edf8;
+  --toc-item-hover: #e8edf8;
+  --pw-modal-bg:    #ffffff;
+  --info-card-bg:   #f0f4fc;
+}
+
+/* ═══════════════════════════════════════
+   RESET & BASE
+═══════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Noto Sans KR', sans-serif;
+  background: var(--bg-base);
+  color: var(--text-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+  transition: background 0.35s ease, color 0.35s ease;
+}
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 80% 50% at 10% 0%,  var(--noise-color1) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 90% 80%, var(--noise-color2) 0%, transparent 60%),
+    repeating-linear-gradient(0deg, transparent, transparent 39px,
+      var(--grid-line) 39px, var(--grid-line) 40px);
+  transition: background 0.35s ease;
+}
+
+/* ═══════════════════════════════════════
+   THEME TOGGLE BUTTON
+═══════════════════════════════════════ */
+.theme-toggle {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 12px; border-radius: 20px; border: none; cursor: pointer;
+  font-family: 'Noto Sans KR', sans-serif; font-size: 12px; font-weight: 600;
+  transition: all 0.3s ease; position: relative; overflow: hidden;
+  white-space: nowrap;
+}
+[data-theme="dark"] .theme-toggle {
+  background: rgba(255,255,255,0.07);
+  color: #c8d4f0;
+  border: 1px solid rgba(255,255,255,0.12);
+}
+[data-theme="dark"] .theme-toggle:hover {
+  background: rgba(255,255,255,0.13);
+  border-color: rgba(255,255,255,0.22);
+}
+[data-theme="light"] .theme-toggle {
+  background: rgba(15,26,46,0.07);
+  color: #334166;
+  border: 1px solid rgba(15,26,46,0.14);
+}
+[data-theme="light"] .theme-toggle:hover {
+  background: rgba(15,26,46,0.13);
+  border-color: rgba(15,26,46,0.22);
+}
+.theme-toggle .theme-icon { font-size: 15px; transition: transform 0.4s ease; }
+.theme-toggle:hover .theme-icon { transform: rotate(20deg) scale(1.15); }
+.theme-toggle .theme-label { font-size: 12px; }
+
+/* 슬라이딩 토글 트랙 */
+.toggle-track {
+  width: 36px; height: 20px; border-radius: 10px;
+  position: relative; flex-shrink: 0;
+  transition: background 0.3s ease;
+}
+[data-theme="dark"]  .toggle-track { background: #1e2d50; }
+[data-theme="light"] .toggle-track { background: #b0bedd; }
+.toggle-thumb {
+  position: absolute; top: 3px; width: 14px; height: 14px;
+  border-radius: 50%; transition: left 0.3s ease, background 0.3s ease;
+}
+[data-theme="dark"]  .toggle-thumb { left: 3px;  background: #7b8cde; }
+[data-theme="light"] .toggle-thumb { left: 19px; background: #ffffff; box-shadow: 0 1px 4px rgba(0,0,0,0.2); }
+
+/* ═══════════════════════════════════════
+   HEADER
 ═══════════════════════════════════════ */
 header {
-  position: sticky; top: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between;
-  padding: 0 28px; height: 60px; background: var(--header-bg); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 28px; height: 60px;
+  background: var(--header-bg);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  transition: background 0.35s, border-color 0.35s;
 }
-.header-actions { display: flex; align-items: center; gap: 8px; }
+.logo {
+  font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; letter-spacing: -0.5px;
+  display: flex; align-items: center; gap: 10px; flex-shrink: 0;
+}
+.logo-mark {
+  width: 28px; height: 28px; background: var(--accent);
+  clip-path: polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);
+  display: flex; align-items: center; justify-content: center; font-size: 12px;
+  animation: pulse-mark 3s ease-in-out infinite; transition: background 0.35s;
+}
+@keyframes pulse-mark {
+  0%,100% { box-shadow: 0 0 0 0 rgba(233,69,96,0.4); }
+  50%      { box-shadow: 0 0 0 8px rgba(233,69,96,0); }
+}
+.logo-text span { color: var(--accent); transition: color 0.35s; }
+.header-docname {
+  font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 600;
+  color: var(--text-muted); display: none; align-items: center; gap: 8px;
+}
+.header-docname .dot {
+  width: 7px; height: 7px; border-radius: 50%; background: var(--accent);
+  animation: blink-dot 2.5s ease-in-out infinite;
+}
+@keyframes blink-dot { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+.header-docname .name { color: var(--text-primary); max-width: 240px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.header-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
 
+/* ═══════════════════════════════════════
+   BUTTONS
+═══════════════════════════════════════ */
 .btn {
-  display: inline-flex; align-items: center; gap: 6px; padding: 7px 15px; border-radius: 8px; border: none;
-  cursor: pointer; font-size: 13px; font-weight: 500; transition: all 0.2s; white-space: nowrap;
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 15px; border-radius: 8px; border: none;
+  cursor: pointer; font-family: 'Noto Sans KR', sans-serif;
+  font-size: 13px; font-weight: 500; transition: all 0.2s; white-space: nowrap;
 }
-.btn-ghost { background: transparent; color: var(--text-secondary); border: 1px solid var(--border); }
-.btn-ghost:hover { background: var(--bg-hover); color: var(--text-primary); border-color: var(--accent3); }
 .btn-primary { background: var(--accent); color: #fff; }
+.btn-primary:hover { filter: brightness(1.1); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(214,48,81,0.35); }
+.btn-ghost { background: transparent; color: var(--text-secondary); border: 1px solid var(--border); }
+.btn-ghost:hover { background: var(--bg-hover); color: var(--text-primary); border-color: var(--border-bright); }
+.btn-fullscreen { background: var(--accent-dim); color: var(--accent); border: 1px solid rgba(214,48,81,0.3); }
+.btn-fullscreen:hover { background: rgba(214,48,81,0.2); }
+.btn-edit-locked { background: rgba(123,140,222,0.1); color: var(--accent2); border: 1px solid rgba(123,140,222,0.25); }
+.btn-edit-locked:hover { background: rgba(123,140,222,0.2); }
 
-/* TOAST MESSAGE STYLE */
-#toast {
-  position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
-  background: var(--bg-panel); color: var(--text-primary); padding: 12px 24px;
-  border-radius: 50px; border: 1px solid var(--accent); z-index: 9999;
-  font-size: 14px; box-shadow: var(--shadow); opacity: 0; pointer-events: none;
-  transition: opacity 0.3s, bottom 0.3s;
+/* ═══════════════════════════════════════
+   LAYOUT
+═══════════════════════════════════════ */
+.app-layout {
+  position: relative; z-index: 1;
+  display: grid; grid-template-columns: 260px 1fr;
+  height: calc(100vh - 60px);
 }
-#toast.show { opacity: 1; bottom: 40px; }
 
-/* 간단한 메인 레이아웃 (데모용) */
-.app-layout { display: grid; grid-template-columns: 260px 1fr; height: calc(100vh - 60px); }
-aside { background: var(--bg-panel); border-right: 1px solid var(--border); padding: 20px; }
-main { padding: 40px; overflow-y: auto; }
+/* ═══════════════════════════════════════
+   SIDEBAR
+═══════════════════════════════════════ */
+aside {
+  background: var(--bg-panel); border-right: 1px solid var(--border);
+  display: flex; flex-direction: column; overflow: hidden;
+  transition: background 0.35s, border-color 0.35s;
+}
+.sidebar-section {
+  padding: 18px 20px 10px; font-family: 'Syne', sans-serif;
+  font-size: 10px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--text-muted); flex-shrink: 0;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.toc-count { background: var(--bg-card); border: 1px solid var(--border); color: var(--accent); border-radius: 10px; padding: 1px 8px; font-size: 10px; font-weight: 700; transition: all 0.35s; }
+.toc-list-wrap { flex: 1; overflow-y: auto; padding: 0 10px 20px; }
+.toc-list-wrap::-webkit-scrollbar { width: 3px; }
+.toc-list-wrap::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+.toc-item {
+  display: flex; align-items: center; gap: 6px;
+  padding: 5px 10px; border-radius: 6px; cursor: pointer;
+  font-size: 12px; color: var(--text-secondary); transition: all 0.15s;
+  border-left: 2px solid transparent; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.5;
+}
+.toc-item:hover { background: var(--toc-item-hover); color: var(--text-primary); border-left-color: var(--accent2); }
+.toc-item.active { color: var(--accent); border-left-color: var(--accent); }
+.toc-badge { font-size: 9px; font-weight: 700; font-family: 'Syne', sans-serif; padding: 1px 5px; border-radius: 3px; flex-shrink: 0; }
+.toc-empty { text-align: center; padding: 40px 20px; color: var(--text-muted); font-size: 12px; line-height: 2; }
+.toc-empty-icon { font-size: 28px; margin-bottom: 8px; opacity: 0.3; }
+.sidebar-footer { padding: 14px 20px; border-top: 1px solid var(--border); flex-shrink: 0; }
+.doc-info-card { background: var(--info-card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; transition: all 0.35s; }
+.doc-info-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted); font-family: 'Syne', sans-serif; font-weight: 700; margin-bottom: 5px; }
+.doc-info-name { font-size: 12px; font-weight: 600; color: var(--accent2); font-family: 'JetBrains Mono', monospace; margin-bottom: 3px; }
+.doc-info-date { font-size: 10px; color: var(--text-muted); }
+.doc-info-empty { font-size: 12px; color: var(--text-muted); font-style: italic; }
+
+/* ═══════════════════════════════════════
+   MAIN
+═══════════════════════════════════════ */
+main { overflow-y: auto; overflow-x: hidden; position: relative; }
+main::-webkit-scrollbar { width: 6px; }
+main::-webkit-scrollbar-track { background: var(--bg-base); }
+main::-webkit-scrollbar-thumb { background: var(--border); border-radius: 6px; }
+
+.welcome-screen {
+  display: none; flex-direction: column; align-items: center; justify-content: center;
+  min-height: 100%; padding: 60px 40px;
+}
+.welcome-screen.show { display: flex; }
+.welcome-title {
+  font-family: 'Syne', sans-serif; font-size: clamp(2.4rem, 5vw, 3.6rem); font-weight: 800;
+  text-align: center; line-height: 1.1; margin-bottom: 16px;
+  background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent2) 50%, var(--accent) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.welcome-sub { color: var(--text-muted); font-size: 15px; text-align: center; max-width: 380px; line-height: 1.8; margin-bottom: 36px; }
+
+/* DOC TOOLBAR */
+.doc-toolbar {
+  display: none; align-items: center; justify-content: space-between;
+  padding: 10px 48px; background: var(--bg-panel); border-bottom: 1px solid var(--border);
+  gap: 12px; flex-wrap: wrap; position: sticky; top: 0; z-index: 10;
+  transition: background 0.35s, border-color 0.35s;
+}
+.doc-toolbar.visible { display: flex; }
+.doc-meta { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+.doc-meta-title { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.doc-meta-tags { font-size: 11px; color: var(--accent2); }
+.toolbar-actions { display: flex; gap: 8px; flex-shrink: 0; }
+
+.doc-content { display: none; padding: 48px 60px; max-width: 860px; margin: 0 auto; }
+.doc-content.visible { display: block; }
+
+/* ═══════════════════════════════════════
+   MARKDOWN BODY
+═══════════════════════════════════════ */
+.md-body { font-size: 15px; line-height: 1.85; color: var(--text-secondary); transition: color 0.35s; }
+.md-body h1,.md-body h2,.md-body h3,.md-body h4 {
+  font-family: 'Syne', sans-serif; color: var(--text-primary);
+  margin: 2em 0 0.6em; line-height: 1.3; scroll-margin-top: 80px; transition: color 0.35s;
+}
+.md-body h1 { font-size: 2.2em; font-weight: 800; border-bottom: 2px solid var(--accent); padding-bottom: 10px; margin-top: 0.5em; }
+.md-body h2 { font-size: 1.55em; font-weight: 700; border-bottom: 1px solid var(--border); padding-bottom: 7px; }
+.md-body h3 { font-size: 1.2em; font-weight: 600; }
+.md-body h4 { font-size: 1.05em; font-weight: 600; color: var(--accent2); }
+.md-body p { margin: 0.8em 0; }
+.md-body strong { color: var(--text-primary); font-weight: 700; }
+.md-body em { font-style: italic; }
+.md-body del { color: var(--text-muted); text-decoration: line-through; }
+.md-body a { color: var(--accent2); text-decoration: underline; text-underline-offset: 3px; }
+.md-body a:hover { color: var(--accent); }
+.md-body code {
+  font-family: 'JetBrains Mono', monospace; font-size: 0.85em;
+  background: var(--inline-code-bg); color: var(--inline-code-cl);
+  padding: 2px 7px; border-radius: 5px; border: 1px solid var(--border); transition: all 0.35s;
+}
+.md-body pre {
+  background: var(--code-bg); border: 1px solid var(--border);
+  border-radius: 12px; padding: 20px 22px; overflow-x: auto; margin: 1.2em 0; position: relative; transition: all 0.35s;
+}
+.md-body pre code { background: none; border: none; padding: 0; color: var(--code-color); font-size: 13px; line-height: 1.7; }
+.code-lang-badge { position: absolute; top: 10px; right: 60px; font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 1px; color: var(--text-muted); text-transform: uppercase; }
+.code-copy-btn { position: absolute; top: 8px; right: 12px; background: var(--bg-hover); border: 1px solid var(--border); color: var(--text-muted); border-radius: 6px; padding: 3px 8px; font-size: 11px; cursor: pointer; transition: all 0.15s; }
+.code-copy-btn:hover { color: var(--accent); border-color: var(--accent); }
+.md-body blockquote { border-left: 3px solid var(--accent); padding: 10px 20px; margin: 1em 0; background: var(--blockquote-bg); border-radius: 0 8px 8px 0; color: var(--text-muted); transition: all 0.35s; }
+.md-body ul,.md-body ol { padding-left: 24px; margin: 0.6em 0; }
+.md-body li { margin: 4px 0; line-height: 1.7; }
+.md-body li::marker { color: var(--accent); }
+.md-body hr { border: none; border-top: 1px solid var(--border); margin: 2em 0; }
+.md-body table { width: 100%; border-collapse: collapse; margin: 1.2em 0; font-size: 14px; }
+.md-body th { background: var(--bg-card); padding: 10px 16px; text-align: left; font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--accent2); border-bottom: 2px solid var(--border); transition: all 0.35s; }
+.md-body td { padding: 10px 16px; border-bottom: 1px solid var(--border); color: var(--text-secondary); }
+.md-body tr:hover td { background: var(--table-row-hover); }
+.md-body img { max-width: 100%; border-radius: 10px; margin: 12px 0; border: 1px solid var(--img-border); display: block; cursor: zoom-in; transition: transform 0.2s, box-shadow 0.2s, border-color 0.35s; }
+.md-body img:hover { box-shadow: 0 8px 32px rgba(0,0,0,0.18); transform: scale(1.01); }
+.md-body .img-wrap { margin: 16px 0; }
+.md-body .img-caption { text-align: center; font-size: 12px; color: var(--text-muted); margin-top: 6px; font-style: italic; }
+.doc-header { margin-bottom: 36px; padding-bottom: 28px; border-bottom: 1px solid var(--border); }
+.doc-header-title { font-family: 'Syne', sans-serif; font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 800; line-height: 1.15; color: var(--text-primary); margin-bottom: 14px; }
+.doc-header-meta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.doc-header-date { font-size: 12px; color: var(--text-muted); }
+.tag-chip { display: inline-flex; align-items: center; background: rgba(123,140,222,0.1); border: 1px solid rgba(123,140,222,0.25); color: var(--accent2); padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 500; }
+
+/* ═══════════════════════════════════════
+   비밀번호 모달
+═══════════════════════════════════════ */
+.pw-modal-backdrop {
+  display: none; position: fixed; inset: 0; z-index: 300;
+  background: rgba(0,0,0,0.75); backdrop-filter: blur(12px);
+  align-items: center; justify-content: center;
+}
+.pw-modal-backdrop.open { display: flex; }
+.pw-modal {
+  background: var(--pw-modal-bg); border: 1px solid var(--border-bright);
+  border-radius: 20px; width: min(400px, 92vw); padding: 36px 36px 32px;
+  box-shadow: var(--shadow); animation: pw-in 0.28s cubic-bezier(0.34,1.56,0.64,1); text-align: center;
+  transition: background 0.35s, border-color 0.35s;
+}
+@keyframes pw-in { from{opacity:0;transform:scale(0.88) translateY(16px);} to{opacity:1;transform:scale(1) translateY(0);} }
+.pw-icon { width: 60px; height: 60px; border-radius: 50%; background: var(--accent-dim); border: 1px solid rgba(214,48,81,0.3); display: flex; align-items: center; justify-content: center; font-size: 26px; margin: 0 auto 18px; animation: lock-pulse 2s ease-in-out infinite; }
+@keyframes lock-pulse { 0%,100%{box-shadow:0 0 0 0 rgba(214,48,81,0.25);} 50%{box-shadow:0 0 0 10px rgba(214,48,81,0);} }
+.pw-title { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; color: var(--text-primary); margin-bottom: 6px; }
+.pw-subtitle { font-size: 13px; color: var(--text-muted); margin-bottom: 28px; line-height: 1.6; }
+.pw-input-wrap { position: relative; margin-bottom: 10px; }
+.pw-input { width: 100%; background: var(--bg-card); border: 2px solid var(--border); border-radius: 10px; padding: 14px 46px 14px 18px; color: var(--text-primary); font-family: 'JetBrains Mono', monospace; font-size: 22px; letter-spacing: 10px; text-align: center; transition: border-color 0.2s, background 0.35s; outline: none; }
+.pw-input:focus { border-color: var(--accent2); }
+.pw-input.error { border-color: var(--accent); animation: shake 0.4s ease; }
+@keyframes shake { 0%,100%{transform:translateX(0);} 20%{transform:translateX(-8px);} 40%{transform:translateX(8px);} 60%{transform:translateX(-6px);} 80%{transform:translateX(6px);} }
+.pw-toggle-vis { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--text-muted); font-size: 16px; cursor: pointer; padding: 4px; }
+.pw-error-msg { font-size: 12px; color: var(--accent); height: 18px; margin-bottom: 18px; display: flex; align-items: center; justify-content: center; gap: 5px; opacity: 0; transition: opacity 0.2s; }
+.pw-error-msg.show { opacity: 1; }
+.pw-attempts { display: flex; justify-content: center; gap: 6px; margin-bottom: 20px; }
+.pw-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--border); transition: background 0.2s; }
+.pw-dot.filled { background: var(--accent2); }
+.pw-dot.wrong  { background: var(--accent); }
+.pw-btn { width: 100%; padding: 13px; border-radius: 10px; border: none; background: var(--accent); color: #fff; font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.2s; margin-bottom: 12px; }
+.pw-btn:hover { filter: brightness(1.1); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(214,48,81,0.4); }
+.pw-btn:disabled { background: var(--bg-hover); color: var(--text-muted); cursor: not-allowed; transform: none; box-shadow: none; }
+.pw-cancel { font-size: 13px; color: var(--text-muted); cursor: pointer; background: none; border: none; font-family: 'Noto Sans KR', sans-serif; text-decoration: underline; text-underline-offset: 3px; }
+.pw-unlocked-badge { display: none; align-items: center; gap: 6px; font-size: 11px; color: var(--accent3); background: rgba(95,183,212,0.1); border: 1px solid rgba(95,183,212,0.25); border-radius: 20px; padding: 3px 10px; }
+.pw-unlocked-badge.show { display: inline-flex; }
+
+/* ═══════════════════════════════════════
+   EDIT MODAL
+═══════════════════════════════════════ */
+.modal-backdrop {
+  display: none; position: fixed; inset: 0; z-index: 200;
+  background: rgba(0,0,0,0.72); backdrop-filter: blur(8px);
+  align-items: flex-start; justify-content: center; padding: 24px 16px; overflow-y: auto;
+}
+.modal-backdrop.open { display: flex; }
+.modal {
+  background: var(--bg-panel); border: 1px solid var(--border-bright);
+  border-radius: 16px; width: min(760px, 100%); overflow: hidden; box-shadow: var(--shadow);
+  animation: modal-in 0.25s ease; flex-shrink: 0; transition: background 0.35s;
+}
+@keyframes modal-in { from{opacity:0;transform:scale(0.95) translateY(10px);} to{opacity:1;transform:scale(1) translateY(0);} }
+.modal-header { display: flex; align-items: center; justify-content: space-between; padding: 18px 24px 14px; border-bottom: 1px solid var(--border); }
+.modal-title { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; gap: 10px; }
+.modal-title-sub { font-size: 11px; color: var(--text-muted); font-weight: 400; font-family: 'Noto Sans KR', sans-serif; }
+.modal-close { background: none; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer; padding: 2px 6px; border-radius: 6px; transition: all 0.15s; }
+.modal-close:hover { color: var(--accent); background: var(--accent-dim); }
+.fixed-name-badge { margin: 14px 24px 0; display: flex; align-items: center; gap: 10px; background: var(--bg-card); border: 1px solid var(--border-bright); border-radius: 8px; padding: 10px 16px; transition: all 0.35s; }
+.fixed-name-icon { font-size: 14px; }
+.fixed-name-label { font-size: 11px; color: var(--text-muted); }
+.fixed-name-value { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--accent2); font-weight: 500; }
+.fixed-name-locked { margin-left: auto; font-size: 11px; color: var(--text-muted); }
+.img-toolbar { margin: 12px 24px 0; display: flex; align-items: center; gap: 10px; background: rgba(95,183,212,0.06); border: 1px solid rgba(95,183,212,0.2); border-radius: 8px; padding: 10px 14px; }
+.img-toolbar-label { font-size: 12px; color: var(--accent3); font-weight: 600; flex-shrink: 0; }
+.img-toolbar-desc { font-size: 11px; color: var(--text-muted); flex: 1; }
+.btn-insert-img { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 7px; cursor: pointer; background: rgba(95,183,212,0.15); color: var(--accent3); border: 1px solid rgba(95,183,212,0.3); font-size: 12px; font-weight: 600; font-family: 'Noto Sans KR', sans-serif; transition: all 0.2s; flex-shrink: 0; position: relative; overflow: hidden; }
+.btn-insert-img:hover { background: rgba(95,183,212,0.25); }
+.btn-insert-img input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.img-preview-list { margin: 0 24px; display: none; flex-wrap: wrap; gap: 10px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 12px; transition: all 0.35s; }
+.img-preview-list.has-items { display: flex; }
+.img-preview-item { position: relative; border-radius: 6px; overflow: hidden; border: 2px solid var(--border); cursor: pointer; transition: all 0.2s; flex-shrink: 0; }
+.img-preview-item:hover { border-color: var(--accent3); }
+.img-preview-item.inserted { border-color: var(--accent); }
+.img-preview-item img { width: 80px; height: 60px; object-fit: cover; display: block; }
+.img-preview-item .img-name { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.75); font-size: 9px; color: #fff; padding: 2px 4px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.img-preview-item .img-insert-btn { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(95,183,212,0); color: transparent; font-size: 11px; font-weight: 700; transition: all 0.2s; }
+.img-preview-item:hover .img-insert-btn { background: rgba(95,183,212,0.6); color: #fff; }
+.img-preview-item.inserted .img-insert-btn { background: rgba(214,48,81,0.55); color: #fff; }
+.img-preview-hint { font-size: 11px; color: var(--text-muted); padding: 2px 0; width: 100%; }
+.modal-body { padding: 12px 24px 16px; }
+.modal-input { width: 100%; background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 14px; color: var(--text-primary); font-family: 'JetBrains Mono', monospace; font-size: 12px; resize: vertical; min-height: 260px; line-height: 1.65; transition: border-color 0.2s, background 0.35s, color 0.35s; }
+.modal-input:focus { outline: none; border-color: var(--accent2); }
+.modal-hint { font-size: 11px; color: var(--text-muted); margin-top: 8px; display: flex; align-items: center; gap: 5px; }
+.modal-hint span { color: var(--accent2); }
+.modal-footer { display: flex; gap: 10px; justify-content: space-between; align-items: center; padding: 12px 24px 18px; border-top: 1px solid var(--border); }
+.modal-footer-left { font-size: 11px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; }
+.modal-footer-right { display: flex; gap: 10px; }
+
+/* ═══════════════════════════════════════
+   라이트박스
+═══════════════════════════════════════ */
+.lightbox { display: none; position: fixed; inset: 0; z-index: 500; background: rgba(0,0,0,0.92); backdrop-filter: blur(10px); align-items: center; justify-content: center; cursor: zoom-out; }
+.lightbox.open { display: flex; }
+.lightbox img { max-width: 92vw; max-height: 90vh; object-fit: contain; border-radius: 10px; box-shadow: 0 20px 80px rgba(0,0,0,0.8); animation: lb-in 0.2s ease; }
+@keyframes lb-in { from{opacity:0;transform:scale(0.9);} to{opacity:1;transform:scale(1);} }
+.lightbox-close { position: absolute; top: 20px; right: 24px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; border-radius: 8px; padding: 6px 12px; font-size: 13px; cursor: pointer; }
+.lightbox-filename { position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.1); color: #a8b2d8; border-radius: 20px; padding: 5px 16px; font-size: 12px; font-family: 'JetBrains Mono', monospace; white-space: nowrap; }
+
+/* ═══════════════════════════════════════
+   전체화면
+═══════════════════════════════════════ */
+.fullscreen-overlay { display: none; position: fixed; inset: 0; z-index: 400; background: var(--bg-base); overflow-y: auto; animation: fs-in 0.25s ease; transition: background 0.35s; }
+.fullscreen-overlay.open { display: block; }
+@keyframes fs-in { from{opacity:0;} to{opacity:1;} }
+.fs-header { position: sticky; top: 0; z-index: 10; display: flex; align-items: center; justify-content: space-between; padding: 0 48px; height: 56px; background: var(--header-bg); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border); transition: background 0.35s, border-color 0.35s; }
+.fs-title { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; color: var(--text-primary); max-width: 50vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fs-actions { display: flex; gap: 8px; align-items: center; }
+.btn-close-fs { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 8px; border: none; cursor: pointer; background: var(--accent-dim); color: var(--accent); border: 1px solid rgba(214,48,81,0.35); font-family: 'Noto Sans KR', sans-serif; font-size: 13px; font-weight: 600; transition: all 0.2s; }
+.btn-close-fs:hover { background: rgba(214,48,81,0.2); }
+.fs-progress { position: sticky; top: 56px; z-index: 9; height: 2px; background: linear-gradient(90deg, var(--accent), var(--accent2)); width: 0%; transition: width 0.1s linear; }
+.fs-body { max-width: 860px; margin: 0 auto; padding: 56px 60px 80px; }
+.fs-body .doc-header { margin-bottom: 36px; padding-bottom: 28px; border-bottom: 1px solid var(--border); }
+.fs-body .doc-header-title { font-family: 'Syne', sans-serif; font-size: clamp(1.8rem,4vw,3rem); font-weight: 800; line-height: 1.15; color: var(--text-primary); margin-bottom: 14px; }
+/* 전체화면 md-body 스타일 상속 */
+.fs-body .md-body { font-size: 16px; line-height: 1.9; color: var(--text-secondary); }
+.fs-body .md-body h1,.fs-body .md-body h2,.fs-body .md-body h3,.fs-body .md-body h4 { font-family: 'Syne', sans-serif; color: var(--text-primary); margin: 2em 0 0.6em; line-height: 1.3; scroll-margin-top: 70px; }
+.fs-body .md-body h1 { font-size: 2.2em; font-weight: 800; border-bottom: 2px solid var(--accent); padding-bottom: 10px; margin-top: 0.5em; }
+.fs-body .md-body h2 { font-size: 1.55em; font-weight: 700; border-bottom: 1px solid var(--border); padding-bottom: 7px; }
+.fs-body .md-body h3 { font-size: 1.2em; font-weight: 600; }
+.fs-body .md-body h4 { font-size: 1.05em; font-weight: 600; color: var(--accent2); }
+.fs-body .md-body p { margin: 0.8em 0; }
+.fs-body .md-body strong { color: var(--text-primary); font-weight: 700; }
+.fs-body .md-body em { font-style: italic; }
+.fs-body .md-body del { color: var(--text-muted); text-decoration: line-through; }
+.fs-body .md-body a { color: var(--accent2); text-decoration: underline; text-underline-offset: 3px; }
+.fs-body .md-body code { font-family: 'JetBrains Mono', monospace; font-size: 0.85em; background: var(--inline-code-bg); color: var(--inline-code-cl); padding: 2px 7px; border-radius: 5px; border: 1px solid var(--border); }
+.fs-body .md-body pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px 22px; overflow-x: auto; margin: 1.2em 0; position: relative; }
+.fs-body .md-body pre code { background: none; border: none; padding: 0; color: var(--code-color); font-size: 13px; line-height: 1.7; }
+.fs-body .md-body blockquote { border-left: 3px solid var(--accent); padding: 10px 20px; margin: 1em 0; background: var(--blockquote-bg); border-radius: 0 8px 8px 0; color: var(--text-muted); }
+.fs-body .md-body ul,.fs-body .md-body ol { padding-left: 24px; margin: 0.6em 0; }
+.fs-body .md-body li { margin: 4px 0; line-height: 1.7; }
+.fs-body .md-body li::marker { color: var(--accent); }
+.fs-body .md-body hr { border: none; border-top: 1px solid var(--border); margin: 2em 0; }
+.fs-body .md-body table { width: 100%; border-collapse: collapse; margin: 1.2em 0; font-size: 15px; }
+.fs-body .md-body th { background: var(--bg-card); padding: 10px 16px; text-align: left; font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--accent2); border-bottom: 2px solid var(--border); }
+.fs-body .md-body td { padding: 10px 16px; border-bottom: 1px solid var(--border); color: var(--text-secondary); }
+.fs-body .md-body tr:hover td { background: var(--table-row-hover); }
+.fs-body .md-body img { max-width: 100%; border-radius: 10px; margin: 12px 0; border: 1px solid var(--img-border); display: block; cursor: zoom-in; }
+.fs-body .md-body .img-caption { text-align: center; font-size: 13px; color: var(--text-muted); margin-top: 6px; font-style: italic; }
+
+/* ═══════════════════════════════════════
+   TOAST & PROGRESS
+═══════════════════════════════════════ */
+#toast { position: fixed; bottom: 28px; right: 28px; z-index: 9999; background: var(--bg-panel); border: 1px solid var(--border-bright); border-radius: 10px; padding: 12px 20px; font-size: 13px; color: var(--text-primary); box-shadow: var(--shadow); display: flex; align-items: center; gap: 8px; transform: translateY(20px); opacity: 0; transition: all 0.3s; pointer-events: none; }
+#toast.show { transform: translateY(0); opacity: 1; }
+#reading-progress { position: fixed; top: 60px; left: 0; z-index: 99; height: 2px; background: linear-gradient(90deg, var(--accent), var(--accent2)); width: 0%; transition: width 0.1s linear; }
+
+@media (max-width: 768px) {
+  .app-layout { grid-template-columns: 1fr; }
+  aside { display: none; }
+  .doc-content { padding: 28px 20px; }
+  .fs-body { padding: 32px 24px 60px; }
+  .fs-header { padding: 0 20px; }
+  .pw-modal { padding: 28px 24px 24px; }
+  .theme-label { display: none; }
+}
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 6px; }
 </style>
 </head>
 <body>
 
+<div id="reading-progress"></div>
+
+<!-- ══════════ HEADER ══════════ -->
 <header>
   <div class="logo">
-    <div class="logo-text">✦ MD <span>Vault</span></div>
+    <div class="logo-mark">✦</div>
+    <div class="logo-text">MD <span>Vault</span></div>
   </div>
-  
+
+  <div class="header-docname" id="header-docname">
+    <div class="dot"></div>
+    <span class="name" id="header-doc-name-text"></span>
+  </div>
+
   <div class="header-actions">
-    <button class="btn btn-ghost" id="btn-share">
-      <span>🔗</span>
-      <span>공유하기</span>
+    <!-- 테마 토글 버튼 -->
+    <button class="theme-toggle" onclick="toggleTheme()" id="theme-toggle-btn" title="라이트/다크 모드 전환">
+      <span class="theme-icon" id="theme-icon">🌙</span>
+      <div class="toggle-track"><div class="toggle-thumb"></div></div>
+      <span class="theme-label" id="theme-label">다크 모드</span>
     </button>
-    <button class="btn btn-primary">글쓰기</button>
+
+    <span class="pw-unlocked-badge" id="unlocked-badge">🔓 편집 *** 해제됨</span>
+    <button class="btn btn-fullscreen" id="btn-fullscreen" style="display:none" onclick="openFullscreen()">⛶ 전체화면</button>
+    <button class="btn btn-edit-locked" onclick="requestPasswordThenEdit()">🔒 내용 수정</button>
+    <button class="btn btn-ghost" id="btn-download" style="display:none" onclick="downloadCurrent()">↓ 저장</button>
+    <button class="btn btn-ghost" id="btn-copy"     style="display:none" onclick="copyMarkdown()">⎘ 복사</button>
   </div>
 </header>
 
+<!-- ══════════ LAYOUT ══════════ -->
 <div class="app-layout">
   <aside>
-    <div style="font-size: 12px; color: var(--text-muted);">SIDEBAR CONTENT</div>
+    <div class="sidebar-section">
+      <span>📑 목차</span>
+      <span class="toc-count" id="toc-count">0</span>
+    </div>
+    <div class="toc-list-wrap" id="toc-list">
+      <div class="toc-empty" id="toc-empty">
+        <div class="toc-empty-icon">📋</div>
+        문서를 입력하면<br>목차가 자동 생성됩니다
+      </div>
+    </div>
+    <div class="sidebar-footer">
+      <div class="doc-info-card">
+        <div class="doc-info-label">저장된 파일</div>
+        <div class="doc-info-name" id="info-name"><span class="doc-info-empty">없음</span></div>
+        <div class="doc-info-date" id="info-date"></div>
+      </div>
+    </div>
   </aside>
-  <main>
-    <div class="doc-content visible">
-      <h1 class="doc-meta-title" style="margin-bottom: 20px;">공유 테스트 문서</h1>
-      <p style="line-height: 1.8; color: var(--text-secondary);">
-        오른쪽 상단의 공유하기 버튼을 눌러보세요.<br>
-        모바일에서는 시스템 공유창이, 데스크탑에서는 URL 복사 기능이 작동합니다.
-      </p>
+
+  <main id="main-content" onscroll="updateProgress()">
+    <div class="welcome-screen show" id="welcome-screen">
+      <div class="welcome-title">마크다운을<br>아름답게</div>
+      <div class="welcome-sub">저장된 문서가 없습니다.<br>🔒 내용 수정 버튼을 눌러<br>비밀번호 인증 후 내용을 입력하세요.</div>
+      <button class="btn btn-primary" onclick="requestPasswordThenEdit()">🔒 내용 입력하기</button>
+    </div>
+
+    <div class="doc-toolbar" id="doc-toolbar">
+      <div class="doc-meta">
+        <div class="doc-meta-title" id="toolbar-title">—</div>
+        <div class="doc-meta-tags" id="toolbar-tags"></div>
+      </div>
+      <div class="toolbar-actions">
+        <button class="btn btn-fullscreen" onclick="openFullscreen()">⛶ 전체화면</button>
+        <button class="btn btn-edit-locked" onclick="requestPasswordThenEdit()">🔒 수정</button>
+        <button class="btn btn-ghost" onclick="copyMarkdown()">⎘ 복사</button>
+        <button class="btn btn-ghost" onclick="downloadCurrent()">↓ 저장</button>
+        <button class="btn btn-ghost" onclick="window.print()">⎙ 인쇄</button>
+      </div>
+    </div>
+
+    <div class="doc-content" id="doc-content">
+      <div class="doc-header" id="doc-header"></div>
+      <div class="md-body"    id="md-body"></div>
     </div>
   </main>
 </div>
 
-<div id="toast">🔗 URL이 클립보드에 복사되었습니다.</div>
+<!-- ══════════ 비밀번호 모달 ══════════ -->
+<div class="pw-modal-backdrop" id="pw-modal">
+  <div class="pw-modal">
+    <div class="pw-icon" id="pw-icon">🔒</div>
+    <div class="pw-title">편집 비밀번호</div>
+    <div class="pw-subtitle">내용을 수정하려면<br>비밀번호를 입력하세요</div>
+    <div class="pw-input-wrap">
+      <input class="pw-input" id="pw-input" type="password" maxlength="10" placeholder="••••"
+        onkeydown="if(event.key==='Enter') checkPassword()" oninput="onPwInput()">
+      <button class="pw-toggle-vis" onclick="togglePwVis()" tabindex="-1">👁</button>
+    </div>
+    <div class="pw-error-msg" id="pw-error">⚠ 비밀번호가 틀렸습니다</div>
+    <div class="pw-attempts" id="pw-attempts">
+      <div class="pw-dot" id="dot0"></div>
+      <div class="pw-dot" id="dot1"></div>
+      <div class="pw-dot" id="dot2"></div>
+    </div>
+    <button class="pw-btn" id="pw-submit-btn" onclick="checkPassword()">🔓 확인</button>
+    <button class="pw-cancel" onclick="closePwModal()">취소</button>
+  </div>
+</div>
+
+<!-- ══════════ EDIT MODAL ══════════ -->
+<div class="modal-backdrop" id="paste-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">✎ 마크다운 편집 <span class="modal-title-sub">항상 같은 파일에 덮어씁니다</span></div>
+      <button class="modal-close" onclick="closePasteModal()">✕</button>
+    </div>
+    <div class="fixed-name-badge">
+      <span class="fixed-name-icon">📄</span>
+      <span class="fixed-name-label">저장 위치</span>
+      <span class="fixed-name-value" id="badge-filename">my-document.md</span>
+      <span class="fixed-name-locked">🔒 고정</span>
+    </div>
+    <div class="img-toolbar">
+      <span class="img-toolbar-label">🖼 PNG 삽입</span>
+      <span class="img-toolbar-desc">이미지 선택 후 클릭하면 커서 위치에 삽입됩니다</span>
+      <label class="btn-insert-img">📂 이미지 선택
+        <input type="file" accept=".png,.PNG,image/png" multiple id="png-file-input" onchange="handlePngSelect(event)">
+      </label>
+    </div>
+    <div class="img-preview-list" id="img-preview-list">
+      <div class="img-preview-hint">👆 이미지를 클릭하면 커서 위치에 삽입됩니다</div>
+    </div>
+    <div class="modal-body">
+      <textarea class="modal-input" id="paste-content" placeholder="# 제목&#10;&#10;내용을 입력하세요..."></textarea>
+      <div class="modal-hint">💡 브라우저 <span>localStorage</span>에 저장 — 같은 브라우저에서 자동으로 불러옵니다</div>
+    </div>
+    <div class="modal-footer">
+      <div class="modal-footer-left" id="modal-char-count">0 자</div>
+      <div class="modal-footer-right">
+        <button class="btn btn-ghost" onclick="closePasteModal()">취소</button>
+        <button class="btn btn-primary" onclick="saveAndRender()">✦ 저장 &amp; 렌더링</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ 라이트박스 ══════════ -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close" onclick="closeLightbox()">✕ 닫기</button>
+  <img id="lightbox-img" src="" alt="">
+  <div class="lightbox-filename" id="lightbox-filename"></div>
+</div>
+
+<!-- ══════════ 전체화면 ══════════ -->
+<div class="fullscreen-overlay" id="fullscreen-overlay">
+  <div class="fs-header">
+    <div class="fs-title" id="fs-title">—</div>
+    <div class="fs-actions">
+      <!-- 전체화면 내에도 테마 토글 -->
+      <button class="theme-toggle" onclick="toggleTheme()" title="라이트/다크 모드">
+        <span class="theme-icon" id="fs-theme-icon">🌙</span>
+        <div class="toggle-track"><div class="toggle-thumb"></div></div>
+      </button>
+      <button class="btn btn-edit-locked" onclick="closeFullscreen(); requestPasswordThenEdit()">🔒 수정</button>
+      <button class="btn btn-ghost" onclick="copyMarkdown()">⎘ 복사</button>
+      <button class="btn btn-ghost" onclick="downloadCurrent()">↓ 저장</button>
+      <button class="btn-close-fs" onclick="closeFullscreen()">✕ 닫기</button>
+    </div>
+  </div>
+  <div class="fs-progress" id="fs-progress"></div>
+  <div class="fs-body">
+    <div class="doc-header" id="fs-doc-header"></div>
+    <div class="md-body"    id="fs-md-body"></div>
+  </div>
+</div>
+
+<div id="toast"></div>
 
 <script>
-document.addEventListener('DOMContentLoaded', () => {
-    const shareBtn = document.getElementById('btn-share');
-    const toast = document.getElementById('toast');
+/* ══════════════════════════════════
+   상수
+══════════════════════════════════ */
+const STORAGE_KEY     = 'md_vault_single_doc';
+const THEME_KEY       = 'md_vault_theme';
+const FIXED_FILENAME  = 'my-document.md';
+const CORRECT_PW      = '4538';
+const MAX_ATTEMPTS    = 3;
+const UNLOCK_MINUTES  = 30;
 
-    // 토스트 표시 함수
-    function showToast(message) {
-        toast.textContent = message;
-        toast.classList.add('show');
-        setTimeout(() => {
-            toast.classList.remove('show');
-        }, 2500);
+/* ══════════════════════════════════
+   테마 관리
+══════════════════════════════════ */
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem(THEME_KEY, theme);
+
+  const isDark  = theme === 'dark';
+  const icon    = isDark ? '🌙' : '☀️';
+  const label   = isDark ? '다크 모드' : '라이트 모드';
+
+  // 헤더 버튼
+  const ti = document.getElementById('theme-icon');
+  const tl = document.getElementById('theme-label');
+  const fi = document.getElementById('fs-theme-icon');
+  if (ti) ti.textContent = icon;
+  if (tl) tl.textContent = label;
+  if (fi) fi.textContent = icon;
+}
+
+function toggleTheme() {
+  const current = document.documentElement.getAttribute('data-theme') || 'dark';
+  const next    = current === 'dark' ? 'light' : 'dark';
+  applyTheme(next);
+  showToast(next === 'light' ? '☀️ 라이트 모드로 전환됐습니다' : '🌙 다크 모드로 전환됐습니다');
+}
+
+/* ══════════════════════════════════
+   비밀번호 상태
+══════════════════════════════════ */
+let pwAttempts  = 0;
+let isUnlocked  = false;
+let unlockTimer = null;
+let pngStore    = {};
+
+function requestPasswordThenEdit() {
+  if (isUnlocked) { openPasteModal(); return; }
+  if (pwAttempts >= MAX_ATTEMPTS) { showToast('⛔ 시도 횟수 초과. 페이지를 새로고침하세요.'); return; }
+  document.getElementById('pw-input').value = '';
+  document.getElementById('pw-error').classList.remove('show');
+  updatePwDots();
+  document.getElementById('pw-modal').classList.add('open');
+  setTimeout(() => document.getElementById('pw-input').focus(), 120);
+}
+function closePwModal() { document.getElementById('pw-modal').classList.remove('open'); }
+function onPwInput() {
+  document.getElementById('pw-error').classList.remove('show');
+  document.getElementById('pw-input').classList.remove('error');
+}
+function togglePwVis() {
+  const inp = document.getElementById('pw-input');
+  const btn = document.querySelector('.pw-toggle-vis');
+  if (inp.type === 'password') { inp.type = 'text'; btn.textContent = '🙈'; }
+  else                         { inp.type = 'password'; btn.textContent = '👁'; }
+}
+function updatePwDots() {
+  for (let i = 0; i < MAX_ATTEMPTS; i++) {
+    const d = document.getElementById(`dot${i}`);
+    if (!d) continue;
+    d.className = 'pw-dot';
+    if (i < pwAttempts) d.classList.add('wrong');
+  }
+}
+function checkPassword() {
+  const input = document.getElementById('pw-input').value;
+  const errEl = document.getElementById('pw-error');
+  const inpEl = document.getElementById('pw-input');
+  if (input === CORRECT_PW) {
+    isUnlocked = true; pwAttempts = 0;
+    document.getElementById('pw-icon').textContent = '🔓';
+    document.getElementById('unlocked-badge').classList.add('show');
+    clearTimeout(unlockTimer);
+    unlockTimer = setTimeout(() => {
+      isUnlocked = false;
+      document.getElementById('unlocked-badge').classList.remove('show');
+      showToast('🔒 편집 잠금이 재활성화되었습니다');
+    }, UNLOCK_MINUTES * 60 * 1000);
+    closePwModal();
+    showToast('🔓 인증 성공! 편집 모달을 엽니다');
+    setTimeout(() => openPasteModal(), 200);
+  } else {
+    pwAttempts++;
+    inpEl.classList.add('error');
+    setTimeout(() => inpEl.classList.remove('error'), 500);
+    updatePwDots();
+    const remain = MAX_ATTEMPTS - pwAttempts;
+    if (remain <= 0) {
+      errEl.textContent = '⛔ 시도 횟수를 초과했습니다. 페이지를 새로고침하세요.';
+      errEl.classList.add('show');
+      document.getElementById('pw-submit-btn').disabled = true;
+      document.getElementById('pw-input').disabled = true;
+    } else {
+      errEl.textContent = `⚠ 비밀번호가 틀렸습니다 (남은 시도: ${remain}회)`;
+      errEl.classList.add('show');
+      inpEl.value = ''; inpEl.focus();
     }
-
-    // 공유하기 클릭 이벤트
-    shareBtn.addEventListener('click', async () => {
-        const docTitle = document.querySelector('.doc-meta-title')?.textContent || "MD Vault 문서";
-        const shareData = {
-            title: docTitle,
-            text: 'MD Vault에서 마크다운 문서를 확인해보세요!',
-            url: window.location.href
-        };
-
-        try {
-            // 1. Web Share API 지원 여부 확인 (최신 모바일 브라우저 등)
-            if (navigator.share) {
-                await navigator.share(shareData);
-            } else {
-                // 2. 미지원 시 (데스크탑 등) 클립보드 복사
-                await navigator.clipboard.writeText(window.location.href);
-                showToast('🔗 URL이 클립보드에 복사되었습니다.');
-            }
-        } catch (err) {
-            // 사용자가 공유를 취소한 경우가 아니면 에러 표시
-            if (err.name !== 'AbortError') {
-                console.error('공유 실패:', err);
-                showToast('❌ 공유 중 오류가 발생했습니다.');
-            }
-        }
-    });
+  }
+}
+document.getElementById('pw-modal').addEventListener('click', e => {
+  if (e.target === e.currentTarget) closePwModal();
 });
-</script>
 
+/* ══════════════════════════════════
+   MARKDOWN PARSER
+══════════════════════════════════ */
+function parseMarkdown(md) {
+  const lines = md.split('\n');
+  let html = '', i = 0, hi = 0;
+  const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  function inline(t) {
+    t = t.replace(/`([^`]+)`/g, '<code>$1</code>');
+    t = t.replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>');
+    t = t.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    t = t.replace(/\*(.+?)\*/g, '<em>$1</em>');
+    t = t.replace(/_(.+?)_/g, '<em>$1</em>');
+    t = t.replace(/~~(.+?)~~/g, '<del>$1</del>');
+    t = t.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (_, alt, src) => {
+      const cap = alt ? `<div class="img-caption">${alt}</div>` : '';
+      return `<div class="img-wrap"><img src="${src}" alt="${alt}" loading="lazy" onclick="openLightbox(this)" data-filename="${alt||'image'}"></div>${cap}`;
+    });
+    t = t.replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" target="_blank">$1</a>');
+    return t;
+  }
+  function anchor(text, idx) {
+    return `h${idx}-` + text.toLowerCase().replace(/[^\w가-힣\s-]/g,'').replace(/\s+/g,'-').trim();
+  }
+  while (i < lines.length) {
+    const line = lines[i];
+    if (line.startsWith('```')) {
+      const lang = line.slice(3).trim(), buf = []; i++;
+      while (i < lines.length && !lines[i].startsWith('```')) { buf.push(esc(lines[i])); i++; }
+      const lb = lang ? `<span class="code-lang-badge">${lang}</span>` : '';
+      html += `<pre>${lb}<button class="code-copy-btn" onclick="copyCode(this)">복사</button><code>${buf.join('\n')}</code></pre>`;
+      i++; continue;
+    }
+    const hm = line.match(/^(#{1,4})\s+(.*)/);
+    if (hm) { const lv=hm[1].length,text=hm[2].trim(); html+=`<h${lv} id="${anchor(text,hi++)}">${inline(text)}</h${lv}>`; i++; continue; }
+    if (/^-{3,}$/.test(line.trim())) { html += '<hr>'; i++; continue; }
+    if (line.startsWith('> ')) {
+      const bq = [];
+      while (i < lines.length && lines[i].startsWith('> ')) { bq.push(inline(lines[i].slice(2))); i++; }
+      html += `<blockquote>${bq.join('<br>')}</blockquote>`; continue;
+    }
+    if (line.includes('|') && i+1 < lines.length && lines[i+1].includes('---')) {
+      const headers = line.split('|').map(h=>h.trim()).filter(Boolean); i+=2;
+      const rows=[];
+      while (i<lines.length && lines[i].includes('|')) { rows.push(lines[i].split('|').map(c=>c.trim()).filter(Boolean)); i++; }
+      html += '<table><thead><tr>'+headers.map(h=>`<th>${inline(h)}</th>`).join('')+'</tr></thead>';
+      html += '<tbody>'+rows.map(r=>'<tr>'+r.map(c=>`<td>${inline(c)}</td>`).join('')+'</tr>').join('')+'</tbody></table>'; continue;
+    }
+    if (/^[-*+]\s/.test(line)) {
+      const items=[];
+      while (i<lines.length && /^[-*+]\s/.test(lines[i])) { items.push(`<li>${inline(lines[i].replace(/^[-*+]\s/,''))}</li>`); i++; }
+      html += `<ul>${items.join('')}</ul>`; continue;
+    }
+    if (/^\d+\.\s/.test(line)) {
+      const items=[];
+      while (i<lines.length && /^\d+\.\s/.test(lines[i])) { items.push(`<li>${inline(lines[i].replace(/^\d+\.\s/,''))}</li>`); i++; }
+      html += `<ol>${items.join('')}</ol>`; continue;
+    }
+    if (!line.trim()) { html += '<div style="height:6px"></div>'; i++; continue; }
+    html += `<p>${inline(line)}</p>`; i++;
+  }
+  return html;
+}
+
+/* ══════════════════════════════════
+   META / TOC
+══════════════════════════════════ */
+function parseMeta(md) {
+  const t=md.match(/^#\s+(.*)/m), d=md.match(/\*\*작성일:\*\*\s*([^\n<]+)/), g=md.match(/\*\*태그:\*\*\s*([^\n<]+)/);
+  return { title: t?t[1].trim():FIXED_FILENAME.replace('.md',''), date:d?d[1].trim():'', tags:g?g[1].trim():'' };
+}
+function extractHeadings(md) {
+  const result=[]; let idx=0;
+  md.split('\n').forEach(line => {
+    const m=line.match(/^(#{1,4})\s+(.*)/);
+    if (m) { const text=m[2].trim(); result.push({level:m[1].length,text,anchor:`h${idx}-`+text.toLowerCase().replace(/[^\w가-힣\s-]/g,'').replace(/\s+/g,'-').trim()}); idx++; }
+  });
+  return result;
+}
+function renderToc(headings) {
+  const list=document.getElementById('toc-list'), empty=document.getElementById('toc-empty');
+  document.getElementById('toc-count').textContent = headings.length;
+  if (!headings.length) { list.innerHTML=''; list.appendChild(empty); return; }
+  const COLORS={1:'#e94560',2:'#7b8cde',3:'#5fb7d4',4:'#8ecf8e'};
+  const LABELS={1:'H1',2:'H2',3:'H3',4:'H4'};
+  const INDENT={1:0,2:12,3:24,4:36};
+  list.innerHTML = headings.map(h=>`
+    <div class="toc-item" style="padding-left:${10+INDENT[h.level]}px" data-anchor="${h.anchor}" onclick="scrollToHeading('${h.anchor}')">
+      <span class="toc-badge" style="background:${COLORS[h.level]}22;color:${COLORS[h.level]}">${LABELS[h.level]}</span>
+      ${h.text.length>26?h.text.slice(0,26)+'…':h.text}
+    </div>`).join('');
+}
+function scrollToHeading(anchor) {
+  const el=document.getElementById(anchor); if (!el) return;
+  el.scrollIntoView({behavior:'smooth',block:'start'});
+  el.style.transition='background 0.1s'; el.style.background='rgba(233,69,96,0.15)'; el.style.borderRadius='6px';
+  setTimeout(()=>{el.style.transition='background 1.5s ease'; el.style.background='transparent';},200);
+  document.querySelectorAll('.toc-item').forEach(item=>item.classList.toggle('active',item.dataset.anchor===anchor));
+}
+
+/* ══════════════════════════════════
+   RENDER
+══════════════════════════════════ */
+function renderDoc(content, savedAt) {
+  const meta=parseMeta(content);
+  document.getElementById('toolbar-title').textContent = meta.title;
+  document.getElementById('toolbar-tags').textContent  = meta.tags?`🏷 ${meta.tags}`:'';
+  document.getElementById('doc-toolbar').classList.add('visible');
+  let mh='';
+  if (meta.date) mh+=`<span class="doc-header-date">📅 ${meta.date}</span>`;
+  if (meta.tags) meta.tags.split(',').forEach(t=>mh+=`<span class="tag-chip">${t.trim()}</span>`);
+  document.getElementById('doc-header').innerHTML=`<div class="doc-header-title">${meta.title}</div><div class="doc-header-meta">${mh}</div>`;
+  document.getElementById('md-body').innerHTML=parseMarkdown(content);
+  document.getElementById('welcome-screen').classList.remove('show');
+  document.getElementById('doc-content').classList.add('visible');
+  document.getElementById('header-doc-name-text').textContent=FIXED_FILENAME;
+  document.getElementById('header-docname').style.display='flex';
+  document.getElementById('btn-fullscreen').style.display='';
+  document.getElementById('btn-download').style.display='';
+  document.getElementById('btn-copy').style.display='';
+  document.getElementById('info-name').textContent=FIXED_FILENAME;
+  document.getElementById('info-date').textContent=savedAt?`💾 ${savedAt}`:'';
+  renderToc(extractHeadings(content));
+}
+
+/* ══════════════════════════════════
+   STORAGE
+══════════════════════════════════ */
+function saveDoc(content) {
+  const savedAt=new Date().toLocaleString('ko-KR');
+  localStorage.setItem(STORAGE_KEY, JSON.stringify({content,savedAt}));
+  return savedAt;
+}
+function loadDoc() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)); } catch(e) { return null; }
+}
+
+/* ══════════════════════════════════
+   PNG
+══════════════════════════════════ */
+function handlePngSelect(e) {
+  const files=Array.from(e.target.files); if(!files.length) return;
+  const listEl=document.getElementById('img-preview-list'); listEl.classList.add('has-items');
+  files.forEach(file=>{
+    if (!file.type.includes('png')) return;
+    const reader=new FileReader();
+    reader.onload=ev=>{
+      const dataUrl=ev.target.result, key=file.name;
+      pngStore[key]={dataUrl,name:file.name};
+      const exist=listEl.querySelector(`[data-key="${CSS.escape(key)}"]`);
+      if (exist) { exist.querySelector('img').src=dataUrl; return; }
+      const item=document.createElement('div');
+      item.className='img-preview-item'; item.dataset.key=key;
+      item.innerHTML=`<img src="${dataUrl}" alt="${file.name}"><div class="img-name">${file.name}</div><div class="img-insert-btn">삽입</div>`;
+      item.addEventListener('click',()=>insertImageToEditor(key,dataUrl,file.name,item));
+      listEl.insertBefore(item,listEl.querySelector('.img-preview-hint').nextSibling);
+      showToast(`🖼 "${file.name}" 로드됨`);
+    };
+    reader.readAsDataURL(file);
+  });
+  e.target.value='';
+}
+function insertImageToEditor(key,dataUrl,filename,itemEl) {
+  const textarea=document.getElementById('paste-content');
+  const nameNoExt=filename.replace(/\.[^.]+$/,'');
+  const mdSnippet=`\n![${nameNoExt}](${dataUrl})\n`;
+  const start=textarea.selectionStart, end=textarea.selectionEnd, val=textarea.value;
+  textarea.value=val.slice(0,start)+mdSnippet+val.slice(end);
+  const newPos=start+mdSnippet.length;
+  textarea.setSelectionRange(newPos,newPos); textarea.focus();
+  itemEl.classList.add('inserted'); itemEl.querySelector('.img-insert-btn').textContent='✓ 삽입됨';
+  updateCharCount(); showToast(`✦ "${filename}" 삽입됨`);
+}
+
+/* ══════════════════════════════════
+   EDIT MODAL
+══════════════════════════════════ */
+function openPasteModal() {
+  const saved=loadDoc();
+  document.getElementById('paste-content').value=saved?saved.content:'';
+  document.getElementById('badge-filename').textContent=FIXED_FILENAME;
+  document.querySelectorAll('.img-preview-item').forEach(el=>{el.classList.remove('inserted');el.querySelector('.img-insert-btn').textContent='삽입';});
+  updateCharCount();
+  document.getElementById('paste-modal').classList.add('open');
+  setTimeout(()=>document.getElementById('paste-content').focus(),100);
+}
+function closePasteModal() { document.getElementById('paste-modal').classList.remove('open'); }
+function saveAndRender() {
+  const content=document.getElementById('paste-content').value.trim();
+  if (!content) { showToast('⚠ 내용을 입력해주세요'); return; }
+  const savedAt=saveDoc(content);
+  renderDoc(content,savedAt);
+  closePasteModal();
+  document.getElementById('main-content').scrollTo({top:0});
+  showToast(`✦ ${FIXED_FILENAME} 저장 완료`);
+  setTimeout(()=>openFullscreen(),300);
+}
+function updateCharCount() {
+  const len=document.getElementById('paste-content').value.length;
+  document.getElementById('modal-char-count').textContent=len.toLocaleString()+' 자';
+}
+document.getElementById('paste-content').addEventListener('input',updateCharCount);
+document.getElementById('paste-modal').addEventListener('click',e=>{if(e.target===e.currentTarget)closePasteModal();});
+
+/* ══════════════════════════════════
+   LIGHTBOX
+══════════════════════════════════ */
+function openLightbox(imgEl) {
+  document.getElementById('lightbox-img').src=imgEl.src;
+  document.getElementById('lightbox-filename').textContent=imgEl.dataset.filename||imgEl.alt||'image';
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeLightbox() { document.getElementById('lightbox').classList.remove('open'); document.body.style.overflow=''; }
+
+/* ══════════════════════════════════
+   FULLSCREEN
+══════════════════════════════════ */
+function openFullscreen() {
+  const saved=loadDoc(); if (!saved) return;
+  const meta=parseMeta(saved.content);
+  document.getElementById('fs-title').textContent=meta.title;
+  let mh='';
+  if (meta.date) mh+=`<span class="doc-header-date">📅 ${meta.date}</span>`;
+  if (meta.tags) meta.tags.split(',').forEach(t=>mh+=`<span class="tag-chip">${t.trim()}</span>`);
+  document.getElementById('fs-doc-header').innerHTML=`<div class="doc-header-title">${meta.title}</div><div class="doc-header-meta">${mh}</div>`;
+  document.getElementById('fs-md-body').innerHTML=parseMarkdown(saved.content);
+  document.getElementById('fullscreen-overlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeFullscreen() { document.getElementById('fullscreen-overlay').classList.remove('open'); document.body.style.overflow=''; }
+document.getElementById('fullscreen-overlay').addEventListener('scroll',function(){
+  const pct=this.scrollHeight-this.clientHeight>0?this.scrollTop/(this.scrollHeight-this.clientHeight)*100:0;
+  document.getElementById('fs-progress').style.width=pct+'%';
+});
+
+/* ══════════════════════════════════
+   TOOLBAR
+══════════════════════════════════ */
+function copyMarkdown() { const s=loadDoc(); if(!s) return; navigator.clipboard.writeText(s.content).then(()=>showToast('⎘ 복사됨')); }
+function copyCode(btn) { const c=btn.closest('pre').querySelector('code').textContent; navigator.clipboard.writeText(c).then(()=>{btn.textContent='✓';setTimeout(()=>btn.textContent='복사',1500);}); }
+function downloadCurrent() {
+  const s=loadDoc(); if(!s) return;
+  const blob=new Blob([s.content],{type:'text/markdown'});
+  const url=URL.createObjectURL(blob);
+  const a=Object.assign(document.createElement('a'),{href:url,download:FIXED_FILENAME});
+  a.click(); URL.revokeObjectURL(url); showToast(`↓ ${FIXED_FILENAME} 저장 완료`);
+}
+
+/* ══════════════════════════════════
+   UI
+══════════════════════════════════ */
+function updateProgress() {
+  const el=document.getElementById('main-content');
+  const pct=el.scrollHeight-el.clientHeight>0?el.scrollTop/(el.scrollHeight-el.clientHeight)*100:0;
+  document.getElementById('reading-progress').style.width=pct+'%';
+}
+function showToast(msg) {
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(t._timer); t._timer=setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+/* ══════════════════════════════════
+   KEYBOARD
+══════════════════════════════════ */
+document.addEventListener('keydown',e=>{
+  if (e.key==='Escape') {
+    if (document.getElementById('lightbox').classList.contains('open'))           { closeLightbox();   return; }
+    if (document.getElementById('fullscreen-overlay').classList.contains('open')) { closeFullscreen(); return; }
+    if (document.getElementById('paste-modal').classList.contains('open'))        { closePasteModal(); return; }
+    if (document.getElementById('pw-modal').classList.contains('open'))           { closePwModal();    return; }
+    return;
+  }
+  const tag=document.activeElement.tagName;
+  if (tag==='TEXTAREA'||tag==='INPUT') return;
+  if ((e.ctrlKey||e.metaKey)&&e.key==='e') { e.preventDefault(); requestPasswordThenEdit(); }
+  if ((e.ctrlKey||e.metaKey)&&e.key==='f') { e.preventDefault(); openFullscreen(); }
+  if ((e.ctrlKey||e.metaKey)&&e.key==='s') { e.preventDefault(); downloadCurrent(); }
+  if ((e.ctrlKey||e.metaKey)&&e.key==='t') { e.preventDefault(); toggleTheme(); }
+});
+
+/* ══════════════════════════════════
+   INIT
+══════════════════════════════════ */
+(function init() {
+  // 저장된 테마 복원
+  const savedTheme = localStorage.getItem(THEME_KEY) || 'dark';
+  applyTheme(savedTheme);
+
+  document.getElementById('badge-filename').textContent = FIXED_FILENAME;
+  const saved = loadDoc();
+  if (saved && saved.content) {
+    renderDoc(saved.content, saved.savedAt);
+    setTimeout(() => openFullscreen(), 100);
+  }
+})();
+</script>
 </body>
 </html>
